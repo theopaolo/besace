@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} · {{ config.title }}{% endblock %}
+{% block content %}
+<h1>{{ page.title }}</h1>
+<p><a href="{{ page.extra.url }}">{{ page.extra.url }}</a></p>
+{{ page.content | safe }}
+<p class="tags">
+{% for cat in page.taxonomies.category %}<a href="{{ get_taxonomy_url(kind="category", name=cat) }}">{{ cat }}</a>{% endfor %}
+{% for tag in page.taxonomies.tags %}<a href="{{ get_taxonomy_url(kind="tags", name=tag) }}">#{{ tag }}</a>{% endfor %}
+</p>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ config.title }}</h1>
+<p>{{ config.description }}</p>
+{% set cats = get_taxonomy(kind="category") %}
+{% for term in cats.items %}
+<h2 id="{{ term.slug }}">{{ term.name }}</h2>
+<ul>
+{% for page in term.pages %}
+  <li><a href="{{ page.extra.url }}">{{ page.title }}</a> <small><a href="{{ page.permalink }}">fiche</a></small> : {{ page.content | striptags | truncate(length=160) }}</li>
+{% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}

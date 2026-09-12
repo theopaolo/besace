@@ -1,8 +1,10 @@
 ---
 title: "Slidev"
-url: https://sli.dev/
-category: ressources
-tags: [markdown, presentation, pedagogie]
+extra:
+  url: https://sli.dev/
+taxonomies:
+  category: [ressources]
+  tags: [markdown, presentation, pedagogie]
 ---
 
 [Slidev](https://sli.dev/) : Outil de création de présentations en Markdown destiné aux développeurs.

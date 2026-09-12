@@ -1,8 +1,10 @@
 ---
 title: "Titre de la ressource"
-url: "https://example.org/"
-category: ressources
-tags: []
+extra:
+  url: "https://example.org/"
+taxonomies:
+  category: [ressources]
+  tags: []
 ---
 
 Expliquer ce que propose la ressource et pourquoi la conserver.

@@ -2,51 +2,51 @@
 
 Glane est une bibliothèque collective de liens au format Markdown. Chaque signet comprend une URL, une catégorie, des étiquettes (tags) et une brève description de son utilité.
 
-Le site est accessible à l’adresse : [glane.ludique.dev](https://glane.ludique.dev).
+Le site est accessible à l'adresse : [glane.ludique.dev](https://glane.ludique.dev).
 
-Pour explorer le contenu, ouvrez l’index.
+### Ajouter ou modifier un signet
 
----
+Deux façons, au choix.
 
-### Lire et rechercher
+**Dans le navigateur** : ouvrez [app.pagescms.org](https://app.pagescms.org), connectez-vous avec GitHub, choisissez le dépôt `glane`. Le formulaire impose les champs et enregistre directement dans le dépôt. Le site se reconstruit tout seul en une minute.
 
-- **Dans Obsidian** : ouvrez le dossier `contenu/` comme coffre existant.
+**Dans un éditeur** (Obsidian, VS Code, autre) :
 
-- **Dans VS Code** : installez l’extension Foam, puis ouvrez le dossier `contenu/`.
-
-- **Dans un autre éditeur** : ouvrez directement les fichiers `.md`. Les liens de l’index utilisent la syntaxe Markdown standard.
-
-Utilisez la recherche d’Obsidian ou la recherche globale de VS Code pour retrouver un titre, une URL, un tag ou une phrase. Les liens sous la forme `[[nom-du-fichier]]` permettent de naviguer entre les notes dans Obsidian et Foam.
-
----
-
-### Ajouter un signet
-
-1. Vérifiez que l’URL n’existe pas déjà dans `contenu/signets/` pour éviter les doublons.
-
-2. Copiez le modèle dans `contenu/signets/` sous un nom comme `mon-outil.md`.
-
+1. Vérifiez que l'URL n'existe pas déjà dans `content/signets/`.
+2. Copiez `modeles/signet.md` dans `content/signets/` sous un nom comme `mon-outil.md`.
 3. Remplissez les métadonnées et expliquez en une ou deux phrases pourquoi conserver ce lien.
+4. Pour une image, déposez-la dans `content/images/` et insérez-la avec `![Description](/images/mon-outil.webp)`.
+5. Poussez sur `main`.
 
-4. Ajoutez, si pertinent, un lien vers une autre fiche avec `[[nom-du-fichier]]`.
-
-5. Intégrez la fiche à l’index, sous sa catégorie.
-
-6. Pour une image facultative, déposez un fichier dans `contenu/images/`, puis insérez-le dans la fiche avec `![Description de l’aperçu](../images/mon-outil.webp)`.
-
----
+L'index par catégorie et les pages de tags sont générés à partir des métadonnées, il n'y a rien d'autre à mettre à jour.
 
 ### Conventions
 
-- **Un signet par fichier** : le frontmatter YAML doit contenir `title`, `url`, `category`, `tags`.
+- Un signet par fichier, frontmatter YAML :
 
-- **Nom de fichier unique** : en minuscules, sans accents, avec des tirets.
+  ```yaml
+  ---
+  title: "Nom"
+  extra:
+    url: https://example.org/
+  taxonomies:
+    category: [developpement]
+    tags: [markdown, site-statique]
+  ---
+  ```
 
-- **Catégorie principale** : choisissez parmi _développement_, _design_ ou _ressources_. Si aucune ne convient, ajoutez-en une nouvelle à la liste et à l’index.
+- Nom de fichier en minuscules, sans accents, avec des tirets.
+- Catégorie : `developpement`, `design` ou `ressources`. Pour en ajouter une, ajoutez-la aussi dans `.pages.yml`.
+- Tags courts, en minuscules, sans accents.
+- Lien vers une autre fiche : `[pagefind](@/signets/pagefind.md)`. Zola vérifie que la cible existe.
 
-- **Tags** : courts, en minuscules et sans accents.
+### Site
 
-- **Liens** :
-- Utilisez des wikilinks simples pour les fichiers internes : `[[eleventy]]`.
+Le site est généré par [Zola](https://www.getzola.org/), un binaire sans dépendances. En local :
 
-- Employez des liens Markdown classiques pour les URL externes et les images.
+```sh
+brew install zola
+zola serve
+```
+
+Le déploiement sur GitHub Pages est fait par `.github/workflows/pages.yml` à chaque push sur `main`.

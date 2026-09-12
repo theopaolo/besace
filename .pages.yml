@@ -1,0 +1,42 @@
+media:
+  input: content/images
+  output: /images
+
+content:
+  - name: signets
+    label: Signets
+    type: collection
+    path: content/signets
+    exclude: [_index.md]
+    view:
+      fields: [title, taxonomies.category, taxonomies.tags]
+    fields:
+      - name: title
+        label: Titre
+        type: string
+        required: true
+      - name: extra
+        type: object
+        label: Lien
+        fields:
+          - name: url
+            label: URL
+            type: string
+            required: true
+            pattern: ^https?://
+      - name: taxonomies
+        type: object
+        label: Classement
+        fields:
+          - name: category
+            label: Catégorie
+            type: select
+            list: true
+            options: [developpement, design, ressources]
+          - name: tags
+            label: Tags
+            type: string
+            list: true
+      - name: body
+        label: Pourquoi conserver ce lien
+        type: rich-text
