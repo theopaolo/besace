@@ -24,6 +24,9 @@ content:
             type: string
             required: true
             pattern: ^https?://
+          - name: image
+            label: Image (vignette)
+            type: image
       - name: taxonomies
         type: object
         label: Classement
