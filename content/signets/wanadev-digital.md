@@ -4,7 +4,7 @@ extra:
   image: "/images/wanadev-digital.jpg"
   url: "https://www.wanadevdigital.fr/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, qualite-architecture, developpement]
 ---
 

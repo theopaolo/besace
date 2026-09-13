@@ -3,7 +3,7 @@ title: "Je suis un dev"
 extra:
   url: "https://www.jesuisundev.com"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, developpement]
 ---
 

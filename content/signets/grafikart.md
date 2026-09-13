@@ -3,7 +3,7 @@ title: "Grafikart"
 extra:
   url: "https://grafikart.fr/tutoriels"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [video, php, git, developpement, cybersecurite]
 ---
 

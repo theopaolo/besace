@@ -4,7 +4,7 @@ extra:
   image: "/images/it-efficience.png"
   url: "https://www.itefficience.com/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, qualite-architecture]
 ---
 

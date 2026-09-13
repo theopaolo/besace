@@ -4,7 +4,7 @@ extra:
   image: "/images/tech-cafe.png"
   url: "https://techcafe.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, actu-tech, tech-societe]
 ---
 

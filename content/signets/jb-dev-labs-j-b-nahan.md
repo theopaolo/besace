@@ -4,7 +4,7 @@ extra:
   image: "/images/jb-dev-labs-j-b-nahan.jpg"
   url: "https://nahan.fr"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, qualite-architecture]
 ---
 

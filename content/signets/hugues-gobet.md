@@ -3,7 +3,7 @@ title: "Hugues Gobet"
 extra:
   url: "https://huguesgobet.com/fr"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, qualite-architecture, php]
 ---
 

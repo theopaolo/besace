@@ -4,7 +4,7 @@ extra:
   image: "/images/sfeir-dev.png"
   url: "https://www.sfeir.dev"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, java, developpement, ia]
 ---
 

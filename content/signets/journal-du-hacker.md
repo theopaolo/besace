@@ -3,7 +3,7 @@ title: "Journal du Hacker"
 extra:
   url: "https://www.journalduhacker.net/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, open-source, developpement, cybersecurite]
 ---
 

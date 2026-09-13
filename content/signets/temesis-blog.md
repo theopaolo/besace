@@ -4,7 +4,7 @@ extra:
   image: "/images/temesis-blog.png"
   url: "https://www.temesis.com/blog/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, accessibilite, eco-conception]
 ---
 

@@ -3,7 +3,7 @@ title: "Planète PHP (AFUP)"
 extra:
   url: "https://www.planete-php.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, php, qualite-architecture]
 ---
 

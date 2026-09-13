@@ -3,7 +3,7 @@ title: "LinuxFr.org"
 extra:
   url: "https://linuxfr.org/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, open-source]
 ---
 

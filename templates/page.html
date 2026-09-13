@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <div class="barre retour"><p class="container" data-width="content"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p></div>
-{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set labels = config.extra.categories %}
 {% set cats = page.taxonomies.category | default(value=[]) %}
 {% set tags = page.taxonomies.tags | default(value=[]) %}
 {% set cat_slug = cats | first %}

@@ -4,7 +4,7 @@ extra:
   image: "/images/operae-partners-better-faster-together.png"
   url: "https://blog.operaepartners.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, qualite-architecture]
 ---
 

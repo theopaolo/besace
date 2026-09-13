@@ -3,7 +3,7 @@ title: "NoLimitSecu"
 extra:
   url: "https://www.nolimitsecu.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, cybersecurite]
 ---
 

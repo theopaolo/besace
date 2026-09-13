@@ -4,7 +4,7 @@ extra:
   image: "/images/les-e-novateurs.png"
   url: "https://les-enovateurs.com/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, eco-conception, tech-societe]
 ---
 

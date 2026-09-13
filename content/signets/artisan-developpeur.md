@@ -4,7 +4,7 @@ extra:
   image: "/images/artisan-developpeur.jpg"
   url: "https://podcast.ausha.co/artisan-developpeur"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, qualite-architecture, developpement]
 ---
 

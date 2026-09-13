@@ -4,7 +4,7 @@ extra:
   image: "/images/java-moi.png"
   url: "https://javaetmoi.com"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, java]
 ---
 

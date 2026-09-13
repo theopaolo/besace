@@ -3,7 +3,7 @@ title: "GreenIT.fr"
 extra:
   url: "https://www.greenit.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, eco-conception]
 ---
 

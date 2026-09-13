@@ -4,7 +4,7 @@ extra:
   image: "/images/blog-ippon.jpg"
   url: "https://blog.ippon.fr"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, java, qualite-architecture]
 ---
 

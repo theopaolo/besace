@@ -4,7 +4,7 @@ extra:
   image: "/images/le-code-est-dans-le-pre.png"
   url: "https://lecodeestdanslepre.fr/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, qualite-architecture, cybersecurite]
 ---
 

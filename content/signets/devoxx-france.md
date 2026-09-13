@@ -3,7 +3,7 @@ title: "Devoxx France"
 extra:
   url: "https://www.youtube.com/@DevoxxFRvideos/videos"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [video, java, qualite-architecture, open-source]
 ---
 

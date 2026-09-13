@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ term.name }} · {{ config.title }}{% endblock %}
 {% block content %}
-{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set labels = config.extra.categories %}
 <h1>{% if taxonomy.name == "category" %}{{ labels[term.slug] | default(value=term.name) }}{% else %}#{{ term.name }}{% endif %} <span class="count">{{ term.pages | length }}</span></h1>
 <div class="barre retour"><p class="container" data-width="content"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p></div>
 {% set heading_level = 2 %}

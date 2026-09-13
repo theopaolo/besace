@@ -4,7 +4,7 @@ extra:
   image: "/images/afup-videos-des-conferences.jpg"
   url: "https://afup.org/talks/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [video, php, qualite-architecture, cybersecurite]
 ---
 

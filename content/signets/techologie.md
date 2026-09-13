@@ -3,7 +3,7 @@ title: "Techologie"
 extra:
   url: "https://techologie.net/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, eco-conception, tech-societe]
 ---
 

@@ -3,7 +3,7 @@ title: "Radio CSIRT"
 extra:
   url: "https://www.radiocsirt.org/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, cybersecurite]
 ---
 

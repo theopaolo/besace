@@ -4,7 +4,7 @@ extra:
   image: "/images/dyma-blog.jpg"
   url: "https://dyma.fr/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, developpement, php]
 ---
 

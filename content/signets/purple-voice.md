@@ -4,7 +4,7 @@ extra:
   image: "/images/purple-voice.jpg"
   url: "https://podcast.fr/podcast/purple-voice/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, cybersecurite]
 ---
 

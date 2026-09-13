@@ -4,7 +4,7 @@ extra:
   image: "/images/jeremy-decool-jdecool-fr.jpg"
   url: "https://www.jdecool.fr/blog.html"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, qualite-architecture, php]
 ---
 

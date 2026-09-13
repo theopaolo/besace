@@ -1,4 +1,4 @@
-{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set labels = config.extra.categories %}
 {% set cats = page.taxonomies.category | default(value=[]) %}
 {% set cat_slug = cats | first %}
 {% set tag_list = page.taxonomies.tags | default(value=[]) %}

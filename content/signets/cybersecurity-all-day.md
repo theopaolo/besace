@@ -4,7 +4,7 @@ extra:
   image: "/images/cybersecurity-all-day.jpg"
   url: "https://open.spotify.com/show/7Mt7FaJCmutbUrdFMogo49"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, cybersecurite]
 ---
 

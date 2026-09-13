@@ -4,7 +4,7 @@ extra:
   image: "/images/boavizta.png"
   url: "https://www.boavizta.org/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, eco-conception, open-source]
 ---
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{% if taxonomy.name == "tags" %}Étiquettes{% else %}Catégories{% endif %} · {{ config.title }}{% endblock %}
 {% block content %}
-{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set labels = config.extra.categories %}
 <h1>{% if taxonomy.name == "tags" %}Étiquettes{% else %}Catégories{% endif %}</h1>
 {% if terms %}
 <p class="cluster">{% for term in terms %}<a href="{{ term.permalink }}">{% if taxonomy.name == "category" %}{{ labels[term.slug] | default(value=term.name) }}{% else %}{{ term.name }}{% endif %} <span class="count">{{ term.pages | length }}</span></a>{% endfor %}</p>

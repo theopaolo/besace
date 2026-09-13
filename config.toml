@@ -10,5 +10,10 @@ taxonomies = [
   { name = "category", feed = false },
   { name = "tags", feed = false },
 ]
+[extra.categories]
+developpement = "Développement"
+design = "Design"
+ressources = "Ressources"
+francophone = "Francophone"
 [markdown]
 external_links_target_blank = true

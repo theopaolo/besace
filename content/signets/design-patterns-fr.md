@@ -3,7 +3,7 @@ title: "Design-patterns.fr"
 extra:
   url: "https://design-patterns.fr"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, qualite-architecture, java, developpement]
 ---
 

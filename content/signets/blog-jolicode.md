@@ -4,7 +4,7 @@ extra:
   image: "/images/blog-jolicode.png"
   url: "https://jolicode.com/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, git, qualite-architecture]
 ---
 

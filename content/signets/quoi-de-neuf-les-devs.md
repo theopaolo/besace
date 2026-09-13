@@ -4,7 +4,7 @@ extra:
   image: "/images/quoi-de-neuf-les-devs.jpg"
   url: "https://happytodev.substack.com/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [newsletter, developpement, php, actu-tech]
 ---
 

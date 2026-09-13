@@ -4,7 +4,7 @@
 {% if section.pages %}
 {% set all_tags = get_taxonomy(kind="tags") %}
 {% set cats = get_taxonomy(kind="category") %}
-{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set labels = config.extra.categories %}
 {% set_global unclassified = [] %}
 {% for page in section.pages %}{% if not page.taxonomies.category %}{% set_global unclassified = [...unclassified, page] %}{% endif %}{% endfor %}
 {% set heading_level = 2 %}

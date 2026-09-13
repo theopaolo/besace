@@ -4,7 +4,7 @@ extra:
   image: "/images/access42-blog.png"
   url: "https://access42.net/blog/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, accessibilite]
 ---
 

@@ -3,7 +3,7 @@ title: "Les-Tilleuls.coop"
 extra:
   url: "https://les-tilleuls.coop/blog"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php, developpement, open-source, qualite-architecture]
 ---
 

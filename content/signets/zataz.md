@@ -3,7 +3,7 @@ title: "ZATAZ"
 extra:
   url: "https://www.zataz.com/category/actualites/cyber-actualite/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, cybersecurite]
 ---
 

@@ -35,7 +35,7 @@ content:
             label: Catégorie
             type: select
             list: true
-            options: [developpement, design, ressources]
+            options: [developpement, design, ressources, francophone]
           - name: tags
             label: Tags
             type: string

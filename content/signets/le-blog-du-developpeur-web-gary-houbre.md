@@ -4,7 +4,7 @@ extra:
   image: "/images/le-blog-du-developpeur-web-gary-houbre.jpg"
   url: "https://blog.gary-houbre.fr"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, php]
 ---
 

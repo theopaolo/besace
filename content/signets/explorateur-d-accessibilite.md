@@ -4,7 +4,7 @@ extra:
   image: "/images/explorateur-d-accessibilite.jpg"
   url: "https://podcasts.apple.com/fr/podcast/explorateur-daccessibilité/id1840222834"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, accessibilite, ia]
 ---
 

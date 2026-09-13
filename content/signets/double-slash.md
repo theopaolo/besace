@@ -3,7 +3,7 @@ title: "Double Slash"
 extra:
   url: "https://double-slash.dev/podcasts/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [podcast, developpement, qualite-architecture]
 ---
 

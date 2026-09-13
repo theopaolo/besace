@@ -4,7 +4,7 @@ extra:
   image: "/images/human-coders-news.png"
   url: "https://news.humancoders.com/"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [media, developpement, git, open-source, java]
 ---
 

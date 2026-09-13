@@ -3,7 +3,7 @@ title: "Blog Zenika"
 extra:
   url: "https://blog.zenika.com"
 taxonomies:
-  category: [ressources]
+  category: [ressources, francophone]
   tags: [blog, java, developpement, qualite-architecture]
 ---
 
