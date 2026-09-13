@@ -469,6 +469,11 @@
     background: #fff;
     box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
     transform: rotate(2.5deg);
+    transition: transform 0.25s ease-out;
+  }
+  /* Au survol, la photo bascule d'un angle tiré au sort par base.html. */
+  .fiche:hover .fiche-image {
+    transform: rotate(var(--tilt, -4deg)) scale(1.06);
   }
   .fiche-image img {
     display: block;

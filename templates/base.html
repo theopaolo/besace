@@ -25,5 +25,12 @@
 </header>
 <main id="contenu" tabindex="-1" class="container flow" data-width="content">{% block content %}{% endblock %}</main>
 <footer class="site-footer"> </footer>
+<script>
+  document.addEventListener("mouseover", (e) => {
+    const fiche = e.target.closest(".fiche");
+    if (fiche && !fiche.contains(e.relatedTarget))
+      fiche.style.setProperty("--tilt", `${(Math.random() < 0.5 ? -1 : 1) * (3 + Math.random() * 5)}deg`);
+  });
+</script>
 </body>
 </html>
