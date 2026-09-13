@@ -1,0 +1,40 @@
+{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set cats = page.taxonomies.category | default(value=[]) %}
+{% set cat_slug = cats | first %}
+{% set tag_list = page.taxonomies.tags | default(value=[]) %}
+{% set url = page.extra.url | default(value="") | trim | lower %}
+{% if url is starting_with(pat="https://") or url is starting_with(pat="http://") %}
+{% set domaine = page.extra.url | replace(from="https://", to="") | replace(from="http://", to="") | split(pat="/") | first %}
+{% else %}
+{% set domaine = "" %}
+{% endif %}
+{% set url_brut = page.extra.url | default(value="") %}
+{% set texte_brut = page.content | striptags %}
+{% set tags_bruts = tag_list | join(sep=" ") %}
+{% set recherche = page.title ~ " " ~ url_brut ~ " " ~ texte_brut ~ " " ~ tags_bruts %}
+{# Premier paragraphe en tête, le reste sur le post-it. #}
+{% set paras = page.content | split(pat="</p>") %}
+<li class="fiche"
+  data-categorie="{{ cats | join(sep=" ") }}"
+  data-tags="{{ tags_bruts }}"
+  data-recherche="{{ recherche | lower | escape }}">
+  <p class="fiche-onglet">
+    {% if domaine %}<a href="{{ page.extra.url }}" target="_blank" rel="noopener">{{ domaine }}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>{% else %}<span class="muted">Lien indisponible</span>{% endif %}
+    {% if cat_slug %}<span class="visually-hidden">, catégorie {{ labels[cat_slug] | default(value=cat_slug) }}</span>{% endif %}
+  </p>
+  {% if page.extra.image %}
+    {% set vignette = resize_image(path=page.extra.image, width=256, height=256, op="fill", format="webp", quality=75) %}
+    <a class="fiche-image" href="{{ page.permalink }}" tabindex="-1" aria-hidden="true">
+      <img src="{{ vignette.url }}" alt="" width="256" height="256" loading="lazy">
+    </a>{% endif %}
+  <h{{ heading_level | default(value=3) }} class="fiche-titre">
+    <a href="{{ page.permalink }}">{{ page.title }}</a>
+  </h{{ heading_level | default(value=3) }}>
+  <div class="fiche-texte">{{ paras | first | safe }}</p></div>
+  {% if paras | length > 2 %}<div class="postit">
+    {% for p in paras %}{% if not loop.first and p | trim %}{{ p | safe }}</p>{% endif %}{% endfor %}
+  </div>{% endif %}
+  {% if tag_list %}<p class="fiche-meta small">
+    {% for tag in tag_list %}<a class="tag" href="{{ get_taxonomy_url(kind="tags", name=tag) }}">{{ tag }}</a>{% endfor %}
+  </p>{% endif %}
+</li>

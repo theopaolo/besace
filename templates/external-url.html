@@ -1,0 +1,5 @@
+{% set url = page.extra.url | default(value="") | trim %}
+{% set normalized = url | lower %}
+{% if normalized is starting_with(pat="https://") or normalized is starting_with(pat="http://") %}
+<a{% if compact %} class="signet-url small muted"{% endif %} href="{{ url }}" target="_blank" rel="noopener">{% if compact %}{{ url | replace(from="https://", to="") | replace(from="http://", to="") | trim_end(pat="/") }}{% else %}{{ url }}{% endif %}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>
+{% else %}<span class="small muted">Lien indisponible.</span>{% endif %}

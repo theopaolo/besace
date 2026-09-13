@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ section.title | default(value="Signets") }} · {{ config.title }}{% endblock %}
+{% block content %}
+<h1>{{ section.title | default(value="Signets") }}</h1>
+{% if section.pages %}
+{% set heading_level = 2 %}
+<ul class="grille" role="list">{% for page in section.pages %}{% include "signet.html" %}{% endfor %}</ul>
+{% else %}
+<p>Aucun signet pour le moment. <a href="{{ get_url(path="/") }}">Voir la bibliothèque</a>.</p>
+{% endif %}
+{% endblock %}

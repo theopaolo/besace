@@ -4,19 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}{{ config.title }}{% endblock %}</title>
-<style>
-  body { max-width: 44rem; margin: 2rem auto; padding: 0 1rem; font: 16px/1.5 system-ui, sans-serif; color: #222; background: #fff; }
-  a { color: #0645ad; }
-  h1, h2, h3 { line-height: 1.2; }
-  ul { padding-left: 1.2rem; }
-  li { margin: .3rem 0; }
-  .tags a { margin-right: .5rem; }
-  header nav a { margin-right: 1rem; }
-  @media (prefers-color-scheme: dark) { body { color: #ddd; background: #111; } a { color: #8ab4f8; } }
-</style>
+<link rel="preload" href="{{ get_url(path="fonts/AtkinsonHyperlegibleNextVF-Variable.woff2") }}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ get_url(path="site.css") }}">
+{% block head %}{% endblock %}
 </head>
+
 <body>
-<header><nav><a href="{{ get_url(path="/") }}">{{ config.title }}</a><a href="{{ get_url(path="/tags/") }}">Tags</a></nav></header>
-<main>{% block content %}{% endblock %}</main>
+{# Les Glaneurs de Constable en fond, servi en webp à la taille de l'écran. #}
+{% set fonds = [] %}{% for w in [800, 1200, 1600] %}{% set f = resize_image(path="images/fond.jpg", width=w, op="fit_width", format="webp", quality=70) %}{% set_global fonds = [...fonds, f.url ~ " " ~ w ~ "w"] %}{% endfor %}
+<img class="fond" src="{{ fonds | last | split(pat=" ") | first }}" srcset="{{ fonds | join(sep=", ") }}" sizes="100vw" alt="" fetchpriority="low" decoding="async">
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+<header class="site-header">
+  <nav class="container cluster" data-justify="between" data-width="content" aria-label="Navigation principale">
+    <span class="brand">
+      <a href="{{ get_url(path="/") }}">{{ config.title }}</a>
+      <span class="tagline">{{ config.description }}.</span>
+    </span>
+    <a class="contribuer" href="https://app.pagescms.org" target="_blank" rel="noopener">Ajouter un signet<span class="visually-hidden"> avec Pages CMS (nouvel onglet)</span></a>
+  </nav>
+</header>
+<main id="contenu" tabindex="-1" class="container flow" data-width="content">{% block content %}{% endblock %}</main>
+<footer class="site-footer"> </footer>
 </body>
 </html>

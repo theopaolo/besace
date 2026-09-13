@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Page introuvable · {{ config.title }}{% endblock %}
+{% block content %}
+<h1>Page introuvable</h1>
+<p>Cette adresse ne correspond à aucune fiche. Le signet a peut-être été déplacé ou supprimé.</p>
+<p><a href="{{ get_url(path="/") }}">Retrouver un signet dans la bibliothèque</a></p>
+{% endblock %}
