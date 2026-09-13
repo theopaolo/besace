@@ -1,14 +1,172 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ config.title }}</h1>
-<p>{{ config.description }}</p>
+<h1 class="visually-hidden">{{ config.title }}, {{ config.description | lower }}</h1>
+{% if section.pages %}
+{% set all_tags = get_taxonomy(kind="tags") %}
 {% set cats = get_taxonomy(kind="category") %}
-{% for term in cats.items %}
-<h2 id="{{ term.slug }}">{{ term.name }}</h2>
-<ul>
-{% for page in term.pages %}
-  <li><a href="{{ page.extra.url }}">{{ page.title }}</a> <small><a href="{{ page.permalink }}">fiche</a></small> : {{ page.content | striptags | truncate(length=160) }}</li>
-{% endfor %}
+{% set labels = {"developpement": "Développement", "design": "Design", "ressources": "Ressources"} %}
+{% set_global unclassified = [] %}
+{% for page in section.pages %}{% if not page.taxonomies.category %}{% set_global unclassified = [...unclassified, page] %}{% endif %}{% endfor %}
+{% set heading_level = 2 %}
+<ul class="grille" id="grille" role="list">
+  {% for page in section.pages %}{% include "signet.html" %}{% endfor %}
 </ul>
-{% endfor %}
-{% endblock %}
+<p class="vide" id="vide" hidden>
+  Aucun signet ne correspond à cette recherche.
+  <button type="button" id="reinitialiser">Tout réafficher</button>.
+</p>
+<div class="barre" role="search">
+  {% if all_tags.items %}
+  <div class="container" data-width="content" id="filtres-tags" hidden>
+    <div class="filtres-tags" role="group" aria-label="Filtrer par étiquette">
+      {% for term in all_tags.items %}<button
+        type="button"
+        data-tag="{{ term.slug }}"
+        aria-pressed="false"
+      >
+        {{ term.name }}</button
+      >{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="barre-rangee container" data-width="content">
+    <div class="filtres-cats" role="group" aria-label="Filtrer par catégorie">
+      <button type="button" data-cat="" aria-pressed="true">Tout</button>
+      {% for term in cats.items %}{% set label = labels[term.slug] | default(value=term.name) %}<button type="button" data-cat="{{ term.slug }}" aria-pressed="false">{{ label }}</button>{% endfor %}
+      {% if unclassified %}<button type="button" data-cat="__sans" aria-pressed="false">Sans catégorie</button>{% endif %}
+    </div>
+    {% if all_tags.items %}<button
+      type="button"
+      class="etiquettes-toggle"
+      id="etiquettes-toggle"
+      aria-expanded="false"
+      aria-controls="filtres-tags"
+    >
+      Étiquettes
+      <span class="count" id="etiquettes-count"
+        >{{ all_tags.items | length }}</span
+      ></button
+    >{% endif %}
+    <label class="recherche-champ" for="recherche">
+      <span class="visually-hidden">Rechercher dans les signets</span>
+      <input
+        type="search"
+        id="recherche"
+        name="recherche"
+        placeholder="Rechercher un signet…"
+        autocomplete="off"
+      />
+    </label>
+    <p class="statut" id="statut" aria-live="polite">{{ section.pages | length }} signets</p>
+    <div class="vues" role="group" aria-label="Affichage">
+      <button type="button" data-vue="dossiers" aria-pressed="true">Dossiers</button>
+      <button type="button" data-vue="liste" aria-pressed="false">Liste</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const champ = document.getElementById("recherche");
+  const statut = document.getElementById("statut");
+  const vide = document.getElementById("vide");
+  const reset = document.getElementById("reinitialiser");
+  const etiqCount = document.getElementById("etiquettes-count");
+  const etiqToggle = document.getElementById("etiquettes-toggle");
+  const etiqPanel = document.getElementById("filtres-tags");
+  const boutonsCat = document.querySelectorAll("[data-cat]");
+  const boutonsTag = document.querySelectorAll("[data-tag]");
+  const fiches = document.querySelectorAll("#grille .fiche");
+  const grille = document.getElementById("grille");
+  const boutonsVue = document.querySelectorAll("[data-vue]");
+
+  function majVue(vue) {
+    grille.dataset.vue = vue;
+    for (const b of boutonsVue)
+      b.setAttribute("aria-pressed", String(b.dataset.vue === vue));
+    try { localStorage.setItem("vue", vue); } catch {}
+  }
+  for (const b of boutonsVue) b.addEventListener("click", () => majVue(b.dataset.vue));
+  try { if (localStorage.getItem("vue") === "liste") majVue("liste"); } catch {}
+
+  const nbTags = etiqCount?.textContent ?? "";
+  let catActif = "";
+  const tagsActifs = new Set();
+
+  const normaliser = (s) =>
+    s
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  const mots = (s) => s.split(/\s+/).filter(Boolean);
+
+  function appliquer() {
+    const q = mots(normaliser(champ.value));
+    let visibles = 0;
+    for (const f of fiches) {
+      const cats = mots(f.dataset.categorie);
+      const tags = mots(f.dataset.tags);
+      const texte = normaliser(f.dataset.recherche);
+      const okCat =
+        !catActif ||
+        (catActif === "__sans" ? cats.length === 0 : cats.includes(catActif));
+      const okTags = [...tagsActifs].every((t) => tags.includes(t));
+      const okQ = q.every((mot) => texte.includes(mot));
+      f.hidden = !(okCat && okTags && okQ);
+      if (!f.hidden) visibles++;
+    }
+    statut.textContent =
+      visibles === 0
+        ? "Aucun résultat"
+        : visibles === 1
+          ? "1 signet"
+          : `${visibles} signets`;
+    vide.hidden = visibles !== 0;
+  }
+
+  function majCats() {
+    for (const b of boutonsCat)
+      b.setAttribute("aria-pressed", String(b.dataset.cat === catActif));
+  }
+
+  etiqToggle?.addEventListener("click", () => {
+    etiqPanel.hidden = !etiqPanel.hidden;
+    etiqToggle.setAttribute("aria-expanded", String(!etiqPanel.hidden));
+  });
+
+  champ.addEventListener("input", appliquer);
+
+  for (const b of boutonsCat)
+    b.addEventListener("click", () => {
+      catActif = b.dataset.cat === catActif ? "" : b.dataset.cat;
+      majCats();
+      appliquer();
+    });
+
+  for (const b of boutonsTag)
+    b.addEventListener("click", () => {
+      const t = b.dataset.tag;
+      tagsActifs.has(t) ? tagsActifs.delete(t) : tagsActifs.add(t);
+      b.setAttribute("aria-pressed", String(tagsActifs.has(t)));
+      etiqCount.textContent = tagsActifs.size
+        ? `${tagsActifs.size} / ${nbTags}`
+        : nbTags;
+      appliquer();
+    });
+
+  reset.addEventListener("click", () => {
+    champ.value = "";
+    catActif = "";
+    tagsActifs.clear();
+    majCats();
+    for (const b of boutonsTag) b.setAttribute("aria-pressed", "false");
+    if (etiqCount) etiqCount.textContent = nbTags;
+    appliquer();
+    champ.focus();
+  });
+</script>
+{% else %}
+<p>
+  Aucun signet pour le moment.
+  <a href="https://app.pagescms.org">Ajouter le premier signet</a>.
+</p>
+{% endif %} {% endblock %}
