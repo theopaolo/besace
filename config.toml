@@ -3,6 +3,8 @@ title = "Glane"
 description = "Bibliothèque collective de signets"
 default_language = "fr"
 compile_sass = false
+# Les sources d'images ne sont pas copiées : seules les versions redimensionnées servent.
+ignored_content = ["images/*"]
 build_search_index = false
 taxonomies = [
   { name = "category", feed = false },
