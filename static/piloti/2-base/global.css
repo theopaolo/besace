@@ -1,0 +1,41 @@
+html {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+body {
+  font-size: var(--step-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.18;
+}
+
+h1 {
+  font-size: var(--step-4);
+}
+
+h2 {
+  font-size: var(--step-2);
+}
+
+h3 {
+  font-size: var(--step-1);
+}
+
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.14em;
+}
+
+:focus-visible {
+  outline: 0.1875rem solid var(--focus-color, currentcolor);
+  outline-offset: 0.1875rem;
+}

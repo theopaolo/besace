@@ -1,0 +1,12 @@
+.flow > * + * {
+  margin-block-start: var(--flow-space, var(--space-s));
+}
+
+.flow > * + :is(h2, h3) {
+  margin-block-start: var(--heading-space, var(--space-l));
+}
+
+.flow[data-space="none"] {
+  --flow-space: 0;
+  --heading-space: 0;
+}

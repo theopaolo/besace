@@ -1,0 +1,12 @@
+.box {
+  padding: var(--box-space, var(--space-s));
+}
+
+.box[data-border] {
+  border: var(--box-border-width, var(--border-width)) var(--box-border-style, var(--border-style))
+    var(--box-border-color, var(--border-color));
+}
+
+.box[data-space="none"] {
+  --box-space: 0;
+}

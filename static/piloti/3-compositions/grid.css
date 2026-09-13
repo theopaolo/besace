@@ -1,0 +1,9 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min, 16rem), 100%), 1fr));
+  gap: var(--grid-space, var(--space-s));
+}
+
+.grid[data-space="none"] {
+  --grid-space: 0;
+}

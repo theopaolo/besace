@@ -1,0 +1,27 @@
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, blinkmacsystemfont, "Segoe UI", sans-serif;
+  --step-0: clamp(0.875rem, 0.84rem + 0.12vw, 0.9375rem);
+  --step-1: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --step-2: clamp(1.25rem, 1.16rem + 0.38vw, 1.5rem);
+  --step-3: clamp(1.625rem, 1.45rem + 0.7vw, 2rem);
+  --step-4: clamp(2rem, 1.7rem + 1.2vw, 2.75rem);
+  --space-base: var(--step-1);
+  --space-3xs: calc(var(--space-base) * 0.25);
+  --space-2xs: calc(var(--space-base) * 0.5);
+  --space-xs: calc(var(--space-base) * 0.75);
+  --space-s: var(--space-base);
+  --space-m: calc(var(--space-base) * 1.5);
+  --space-l: calc(var(--space-base) * 2);
+  --space-xl: calc(var(--space-base) * 3);
+  --space-2xl: calc(var(--space-base) * 4);
+  --space-3xl: calc(var(--space-base) * 6);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: currentcolor;
+  --radius-s: 0.25rem;
+  --gutter: clamp(1rem, 4vw, 1.5rem);
+  --measure: 70ch;
+  --container: 75rem;
+  --content: 55rem;
+  --narrow: 30rem;
+}

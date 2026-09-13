@@ -1,0 +1,15 @@
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--switcher-space, var(--space-s));
+}
+
+.switcher[data-space="none"] {
+  --switcher-space: 0;
+}
+
+.switcher > * {
+  flex-basis: calc((var(--switcher-threshold, 42rem) - 100%) * 999);
+  flex-grow: 1;
+  min-inline-size: 0;
+}

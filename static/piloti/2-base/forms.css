@@ -1,0 +1,38 @@
+:where(input, select, textarea) {
+  max-inline-size: 100%;
+  color: inherit;
+}
+
+:where(
+  input:not(
+    [type="button"],
+    [type="checkbox"],
+    [type="color"],
+    [type="file"],
+    [type="hidden"],
+    [type="image"],
+    [type="radio"],
+    [type="range"],
+    [type="reset"],
+    [type="submit"]
+  ),
+  select,
+  textarea
+) {
+  padding-block: var(--control-padding-block, var(--space-2xs));
+  padding-inline: var(--control-padding-inline, var(--space-xs));
+  border: var(--control-border-width, var(--border-width)) var(--control-border-style, var(--border-style))
+    var(--control-border-color, var(--border-color));
+  border-radius: var(--control-radius, var(--radius-s));
+  background-color: var(--control-background, transparent);
+}
+
+textarea {
+  min-block-size: 6rem;
+  resize: vertical;
+}
+
+:where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}

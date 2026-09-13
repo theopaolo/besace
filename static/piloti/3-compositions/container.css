@@ -1,0 +1,12 @@
+.container {
+  width: min(calc(100% - (2 * var(--gutter))), var(--container));
+  margin-inline: auto;
+}
+
+.container[data-width="content"] {
+  --container: var(--content);
+}
+
+.container[data-width="narrow"] {
+  --container: var(--narrow);
+}

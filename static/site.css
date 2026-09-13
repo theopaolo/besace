@@ -1,0 +1,658 @@
+@layer settings, reset, base, compositions, components, utilities;
+@import "piloti/main.css";
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("fonts/AtkinsonHyperlegibleNextVF-Variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@layer settings {
+  :root {
+    color-scheme: light dark;
+    --font-sans: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
+    --bg: light-dark(#e9e9f0, #17181a);
+    --fg: light-dark(#1e1e24, #e8e6e0);
+    --muted: light-dark(#5f6070, #a09c93);
+    --line: light-dark(#cfd0dc, #2c2d30);
+    --accent: light-dark(#4d6531, #a7c78a);
+    --accent-ink: light-dark(#f5f2ea, #17181a);
+    --lavender: light-dark(#e6e0f4, #2b2740);
+    /* Papiers teintés par catégorie, comme des fiches cartonnées. */
+    --paper: light-dark(#f2f2f6, #222325);
+    --postit: light-dark(#fff4a8, #c9b84a);
+    /* Verre dépoli : fond translucide, flou, liseré clair sur le bord. */
+    --verre: light-dark(rgb(240 240 247 / 0.55), rgb(23 24 26 / 0.55));
+    --verre-bord: light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.1));
+    --verre-filtre: blur(18px) saturate(1.5);
+    --paper-design: light-dark(#e6e0f4, #2b2740);
+    --paper-dev: light-dark(#dfe8d0, #253021);
+    --paper-ressources: light-dark(#dfe6ee, #26303a);
+    --tab-h: 1.75rem;
+    --content: 72rem;
+    --measure: 62ch;
+  }
+}
+
+@layer components {
+  body {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  /* Les Glaneurs de Constable, en fond, comme un ciel derrière les dossiers. */
+  .fond {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    opacity: 0.32;
+    pointer-events: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    .fond {
+      opacity: 0.3;
+      filter: brightness(0.75);
+    }
+  }
+  .barre,
+  .grille[data-vue="liste"] {
+    background: var(--verre);
+    -webkit-backdrop-filter: var(--verre-filtre);
+    backdrop-filter: var(--verre-filtre);
+    box-shadow: inset 0 1px 0 var(--verre-bord);
+  }
+  main,
+  .site-header,
+  .site-footer {
+    overflow-wrap: anywhere;
+  }
+  .cluster > * {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  pre {
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  table {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--space-s);
+    inset-block-start: var(--space-s);
+    padding: var(--space-xs);
+    background: var(--bg);
+    z-index: 1;
+  }
+  .skip-link:not(:focus) {
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  a {
+    color: inherit;
+    text-decoration-color: var(--accent);
+  }
+  a:hover {
+    color: var(--accent);
+  }
+  .site-header {
+    padding-block: var(--space-m);
+    margin-block-end: var(--space-l);
+  }
+  .site-header nav {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .site-header a {
+    text-decoration: none;
+  }
+  .site-header .brand {
+    display: flex;
+    flex-direction: column;
+    font-weight: 700;
+    font-size: var(--step-3);
+    line-height: 1.1;
+  }
+  .site-header .tagline {
+    font-weight: 400;
+    font-size: var(--step-0);
+    color: var(--muted);
+  }
+  .lede {
+    max-width: var(--measure);
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .small {
+    font-size: var(--step-0);
+  }
+  .count {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .contribuer {
+    flex: none;
+    padding: var(--space-2xs) var(--space-s);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: var(--step-0);
+    font-weight: 600;
+  }
+  .contribuer:hover {
+    color: var(--accent-ink);
+    background: color-mix(in oklab, var(--accent) 85%, var(--fg));
+  }
+  .recherche-champ {
+    flex: 1 1 14rem;
+    min-inline-size: 0;
+    display: flex;
+    align-items: center;
+    color: var(--fg);
+    background: var(--paper);
+    border: 1px solid transparent;
+    padding: var(--space-2xs) var(--space-s);
+    transition: border-color 0.15s ease-out;
+  }
+  .recherche-champ:focus-within {
+    border-color: var(--accent);
+  }
+  .recherche-champ input {
+    flex: 1;
+    min-inline-size: 0;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: var(--step-1);
+    caret-color: var(--accent);
+  }
+  .recherche-champ input::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+  .recherche-champ input:focus {
+    outline: none;
+  }
+  .filtres-cats,
+  .filtres-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-s);
+  }
+  /* Barre fixée en bas : étiquettes dépliables au-dessus, bascule + recherche sur une ligne. */
+  .barre {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 2;
+    border-block-start: 1px solid var(--line);
+  }
+  .vues {
+    display: flex;
+    gap: var(--space-xs);
+  }
+  .vues button {
+    border: 0;
+    border-block-end: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    padding: var(--space-3xs) 0;
+    font: inherit;
+    font-size: var(--step-0);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .vues button[aria-pressed="true"] {
+    color: var(--fg);
+    border-color: var(--accent);
+  }
+  .barre-rangee {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-m);
+    padding-block: var(--space-2xs);
+  }
+  .statut {
+    flex: none;
+    margin: 0;
+    font-size: var(--step-0);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .etiquettes-toggle {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .etiquettes-toggle::before {
+    content: "▲";
+    font-size: 0.6em;
+    transition: transform 0.15s ease-out;
+  }
+  .etiquettes-toggle[aria-expanded="true"] {
+    color: var(--fg);
+  }
+  .etiquettes-toggle[aria-expanded="true"]::before {
+    transform: rotate(180deg);
+  }
+  .etiquettes-toggle:hover {
+    color: var(--accent);
+  }
+  .barre .recherche-champ {
+    flex: 1 1 8rem;
+    max-inline-size: 28rem;
+    margin-inline-start: auto;
+    padding-block: var(--space-3xs);
+  }
+  .barre .recherche-champ input {
+    font-size: var(--step-0);
+  }
+  #filtres-tags {
+    border-block-end: 1px solid var(--line);
+  }
+  .filtres-tags {
+    gap: var(--space-2xs);
+    padding-block: var(--space-xs);
+    max-block-size: 40vh;
+    overflow-y: auto;
+  }
+  body:has(.barre) {
+    padding-block-end: var(--space-2xl);
+  }
+  .filtres-cats button {
+    border: 0;
+    border-block-end: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    padding: var(--space-3xs) 0;
+    font: inherit;
+    font-size: var(--step-0);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filtres-cats button[aria-pressed="true"] {
+    color: var(--fg);
+    border-color: var(--accent);
+  }
+  .filtres-cats button:hover {
+    color: var(--accent);
+  }
+  .filtres-tags button,
+  .tag {
+    border: 0;
+    background: var(--lavender);
+    color: var(--fg);
+    padding: var(--space-3xs) var(--space-xs);
+    font: inherit;
+    font-size: var(--step-0);
+    cursor: pointer;
+  }
+  .filtres-tags button[aria-pressed="true"] {
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .filtres-tags button:hover,
+  .tag:hover {
+    color: var(--accent-ink);
+    background: var(--accent);
+  }
+
+  .grille {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    columns: 20rem;
+    column-gap: var(--space-m);
+  }
+  .grille > .fiche {
+    break-inside: avoid;
+    margin-block-end: var(--space-m);
+  }
+  /* Vue liste : une ligne par signet, onglet et photo repliés, post-it à plat. */
+  .grille[data-vue="liste"] {
+    columns: auto;
+    border: 1px solid var(--line);
+  }
+  .grille[data-vue="liste"] > .fiche {
+    display: grid;
+    grid-template-columns: minmax(10rem, 1fr) 2fr;
+    grid-template-areas: "titre texte" "onglet argument" "onglet tags";
+    gap: var(--space-3xs) var(--space-m);
+    align-items: baseline;
+    margin: 0;
+    padding: var(--space-xs) var(--space-m);
+    background: transparent;
+    filter: none;
+    border-block-start: 0;
+    border-block-end: 1px solid var(--line);
+  }
+  .grille[data-vue="liste"] > .fiche:last-child {
+    border-block-end: 0;
+  }
+  .grille[data-vue="liste"] .fiche-image {
+    display: none;
+  }
+  .grille[data-vue="liste"] .fiche-onglet {
+    grid-area: onglet;
+    align-self: start;
+    position: static;
+    block-size: auto;
+    max-inline-size: none;
+    padding: 0;
+    background: none;
+    clip-path: none;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .grille[data-vue="liste"] .fiche-titre {
+    grid-area: titre;
+    font-size: var(--step-1);
+  }
+  .grille[data-vue="liste"] .fiche-texte {
+    grid-area: texte;
+    max-width: none;
+  }
+  .grille[data-vue="liste"] .postit {
+    grid-area: argument;
+    background: none;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    transform: none;
+    font-size: var(--step-0);
+  }
+  .grille[data-vue="liste"] .fiche-meta {
+    grid-area: tags;
+  }
+  .grille[data-vue="liste"] .tag {
+    font-size: 0.8rem;
+    padding-block: 0.1em;
+  }
+  @media (max-width: 45rem) {
+    .grille[data-vue="liste"] > .fiche {
+      grid-template-columns: 1fr;
+      grid-template-areas: "titre" "texte" "argument" "tags" "onglet";
+    }
+  }
+  /* Dossier en deux pièces : onglet posé au-dessus du corps, papier teinté par catégorie, ombre portée commune. */
+  .fiche {
+    --papier: var(--paper);
+    position: relative;
+    background-color: var(--papier);
+    background-clip: padding-box;
+    border-block-start: var(--tab-h) solid transparent;
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    display: flow-root;
+    min-inline-size: 0;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12)) drop-shadow(0 6px 12px rgb(0 0 0 / 0.1));
+  }
+  .fiche[data-categorie~="design"],
+  .dossier[data-categorie~="design"] {
+    --papier: var(--paper-design);
+  }
+  .fiche[data-categorie~="developpement"],
+  .dossier[data-categorie~="developpement"] {
+    --papier: var(--paper-dev);
+  }
+  .fiche[data-categorie~="ressources"],
+  .dossier[data-categorie~="ressources"] {
+    --papier: var(--paper-ressources);
+  }
+  .fiche > * + * {
+    margin-block-start: var(--space-xs);
+  }
+  .fiche[hidden] {
+    display: none;
+  }
+  /* L'onglet : une languette légèrement plus foncée que le corps, coin droit biseauté. */
+  .fiche-onglet {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 0;
+    max-inline-size: calc(100% - 1rem);
+    block-size: var(--tab-h);
+    margin: 0;
+    padding-inline: var(--space-m) calc(var(--space-m) + 0.6rem);
+    display: flex;
+    align-items: center;
+    background: color-mix(in oklab, var(--papier) 90%, var(--fg));
+    clip-path: polygon(0 0, calc(100% - 0.9rem) 0, 100% 100%, 0 100%);
+    font-size: var(--step-0);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fiche-onglet a {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+  .fiche .fiche-onglet a::after,
+  .page-url a::after {
+    content: " ↗";
+    color: var(--accent);
+  }
+  .fiche-onglet a:hover {
+    color: var(--accent);
+  }
+  .page-url a {
+    color: var(--muted);
+  }
+  /* Photo agrafée en haut à droite, comme un tirage papier. */
+  .fiche-image {
+    float: inline-end;
+    inline-size: 5.5rem;
+    margin: 0 0 var(--space-2xs) var(--space-s);
+    padding: 0.3rem 0.3rem 1rem;
+    background: #fff;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
+    transform: rotate(2.5deg);
+  }
+  .fiche-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .fiche-titre {
+    font-size: var(--step-2);
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+    line-height: 1.2;
+  }
+  .fiche-titre a {
+    text-decoration: none;
+  }
+  .fiche-titre a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .fiche-texte {
+    font-size: var(--step-0);
+    color: var(--muted);
+    max-width: 58ch;
+  }
+  .fiche-texte > * {
+    margin-block: 0;
+  }
+  .postit {
+    background: var(--postit);
+    color: #1e1e24;
+    --accent: #4d6531; /* le post-it reste clair dans les deux thèmes */
+    padding: var(--space-s) var(--space-m);
+    margin-block-start: var(--space-2xs);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+    transform: rotate(-0.6deg);
+    font-size: var(--step-1);
+    clear: both;
+  }
+  .postit > * {
+    margin-block: 0;
+  }
+  .postit > * + * {
+    margin-block-start: var(--space-xs);
+  }
+  .postit .tag {
+    background: rgb(0 0 0 / 0.08);
+    color: inherit;
+  }
+  .fiche-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-2xs);
+    margin: 0;
+  }
+  .fiche-meta a,
+  .signet-meta a {
+    text-decoration: none;
+  }
+  /* Sur papier teinté, l'étiquette prend une nuance du papier plutôt que le lavande. */
+  .fiche .tag {
+    background: color-mix(in oklab, currentColor 9%, transparent);
+  }
+  .vide {
+    border: 1px dashed var(--line);
+    padding: var(--space-l);
+    text-align: center;
+    color: var(--muted);
+  }
+  .vide button {
+    color: var(--fg);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .page-url {
+    word-break: break-all;
+    font-size: var(--step-0);
+    color: var(--muted);
+  }
+  /* Retour dans une barre fixée en bas, la même que sur l'index. */
+  .retour p {
+    margin-block: 0;
+    padding-block: var(--space-2xs);
+  }
+  .retour a {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-s);
+    background: var(--fg);
+    color: var(--bg);
+    font-size: var(--step-0);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .retour a:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .dossier {
+    --papier: var(--paper);
+    position: relative;
+    max-inline-size: 48rem;
+    margin-inline: auto;
+    margin-block-start: var(--tab-h);
+    background: var(--papier);
+    padding: var(--space-m) var(--space-l) var(--space-l);
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12)) drop-shadow(0 8px 16px rgb(0 0 0 / 0.12));
+  }
+  .dossier .fiche-onglet a {
+    text-decoration: none;
+  }
+  .dossier h1 {
+    margin: 0;
+  }
+  /* Photo agrafée dans le coin du dossier, comme un tirage papier. */
+  .dossier-photo {
+    float: inline-end;
+    inline-size: clamp(6rem, 24%, 9rem);
+    block-size: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin: 0 0 var(--space-s) var(--space-m);
+    padding: 0.4rem 0.4rem 1.4rem;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
+    transform: rotate(2.5deg);
+  }
+  .dossier:has(.dossier-photo) .postit {
+    margin-inline-end: clamp(8rem, 28%, 11rem);
+  }
+  @media (max-width: 45rem) {
+    .dossier {
+      padding-inline: var(--space-m);
+    }
+    .dossier:has(.dossier-photo) .postit {
+      margin-inline-end: 0;
+      clear: both;
+    }
+  }
+  .dossier .postit {
+    max-width: var(--measure);
+    margin-block-start: var(--space-m);
+    transform: rotate(-0.4deg);
+    clear: none;
+  }
+  .voisins {
+    margin-block-start: var(--space-xl);
+  }
+  .voisins h2 {
+    margin-block-end: var(--space-s);
+  }
+  .site-footer {
+    margin-block-start: var(--space-2xl);
+  }
+  .site-footer p {
+    max-width: var(--measure);
+  }
+  @media (max-width: 35rem) {
+    .barre .recherche-champ {
+      order: 1;
+      flex-basis: 100%;
+      max-inline-size: none;
+    }
+    .statut {
+      margin-inline-start: auto;
+    }
+    body:has(.barre) {
+      padding-block-end: 9rem;
+    }
+  }
+}
