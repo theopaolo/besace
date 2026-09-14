@@ -1,0 +1,11 @@
+{# Une rangée du panneau : nom du groupe, étiquettes fréquentes, les rares (< 3 signets) repliées. #}
+{% set_global nb_rares = 0 %}
+{% for t in tri %}{% if t.page_count < 3 %}{% set_global nb_rares = nb_rares + 1 %}{% endif %}{% endfor %}
+{% set replier = nb_rares > 0 and nb_rares < tri | length %}
+<div class="tags-groupe">
+  <span class="tags-groupe-nom small">{{ nom }}</span>
+  {% for t in tri %}{% if t.page_count >= 3 or not replier %}<button type="button" data-tag="{{ t.slug }}" aria-pressed="false">{{ t.name }} <span class="n">{{ t.page_count }}</span></button>{% endif %}{% endfor %}
+  {% if replier %}<details class="tags-rares"><summary class="small">+{{ nb_rares }}</summary>
+    {% for t in tri %}{% if t.page_count < 3 %}<button type="button" data-tag="{{ t.slug }}" aria-pressed="false">{{ t.name }} <span class="n">{{ t.page_count }}</span></button>{% endif %}{% endfor %}
+  </details>{% endif %}
+</div>

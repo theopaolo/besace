@@ -6,7 +6,7 @@ extra:
   url: "https://leroyalmeida.github.io/special-projects/uncommon-library"
 taxonomies:
   category: [design]
-  tags: [books, design]
+  tags: [book, design]
 ---
 
 Books on contemporary art, design, critical studies, and visual culture. With dimensions visualized

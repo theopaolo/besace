@@ -5,7 +5,7 @@ extra:
   url: "https://ctrls.studio/"
 taxonomies:
   category: [design]
-  tags: [design, eco, studios-ateliers-agences]
+  tags: [design, ecologie, studio]
 ---
 
 Ctrl S est le studio de design et d'innovation qui oeuvre pour un numérique plus responsable

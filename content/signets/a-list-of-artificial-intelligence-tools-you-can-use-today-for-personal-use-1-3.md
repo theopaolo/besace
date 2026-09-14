@@ -6,7 +6,7 @@ extra:
   url: "https://medium.com/@LiamHanel/a-list-of-artificial-intelligence-tools-you-can-use-today-for-personal-use-1-3-7f1b60b6c94f"
 taxonomies:
   category: [developpement]
-  tags: [technologie, technology]
+  tags: [tech]
 ---
 
 Artificial Intelligence and the fourth industrial revolution has made some considerable progress over the last couple of years. Most of…

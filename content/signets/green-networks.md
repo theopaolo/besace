@@ -5,7 +5,7 @@ extra:
   url: "https://podcast.greensoftware.foundation/e/rnkw9p2n-green-networks"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, podcast]
+  tags: [ecologie, podcast]
 ---
 
 

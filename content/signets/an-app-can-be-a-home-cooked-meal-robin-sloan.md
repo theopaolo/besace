@@ -6,7 +6,7 @@ extra:
   url: "https://www.robinsloan.com/notes/home-cooked-app"
 taxonomies:
   category: [societe]
-  tags: [home-cooked, app, logiciel-convivial]
+  tags: [app, home-cooked, logiciel-convivial]
 ---
 
 I made a messaging app for my family and my family only.

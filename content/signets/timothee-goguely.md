@@ -5,7 +5,7 @@ extra:
   url: "https://timothee.goguely.com"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb]
+  tags: [ecologie]
 ---
 
 

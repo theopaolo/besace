@@ -5,7 +5,7 @@ extra:
   url: "https://jakedowsmith.studio/"
 taxonomies:
   category: [design]
-  tags: [portfolio, graphiste, design, studios-ateliers-agences]
+  tags: [design, graphisme, portfolio, studio]
 ---
 
 Working with forward-thinking creative companies and individuals to create alternative websites for a distracted generation.

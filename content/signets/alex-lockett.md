@@ -6,7 +6,7 @@ extra:
   url: "https://www.alexanderlockett.com/"
 taxonomies:
   category: [design]
-  tags: [photo, artist]
+  tags: [artist, photography]
 ---
 
 The photography and film work of Alex Lockett

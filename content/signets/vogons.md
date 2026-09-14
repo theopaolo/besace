@@ -5,7 +5,7 @@ extra:
   url: "https://vogons.org/index.php"
 taxonomies:
   category: [developpement]
-  tags: [computer, technology]
+  tags: [computing, tech]
 ---
 
 

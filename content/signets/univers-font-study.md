@@ -6,7 +6,7 @@ extra:
   url: "https://www.behance.net/gallery/199592/Univers-Font-Study"
 taxonomies:
   category: [design]
-  tags: [inspiration, typo, graphisme]
+  tags: [graphisme, inspiration, typographie]
 ---
 
 A typographic study of Univers

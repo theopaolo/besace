@@ -6,7 +6,7 @@ extra:
   url: "https://ping-practice.gitbook.io/pings"
 taxonomies:
   category: [developpement]
-  tags: [degitalgardening, library]
+  tags: [digitalgarden, library]
 ---
 
 

@@ -6,7 +6,7 @@ extra:
   url: "http://bonjourmonde.net/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, graphisme]
+  tags: [graphisme, design, studio]
 ---
 
 Bonjour Monde — Procédés alternatifs et création graphique

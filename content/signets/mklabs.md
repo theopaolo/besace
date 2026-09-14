@@ -5,7 +5,7 @@ extra:
   url: "https://mklaabs.com/"
 taxonomies:
   category: [developpement]
-  tags: [tool, webtool, web]
+  tags: [web, webtool]
 ---
 
 MKLabs is a software development company that creates tools to help people in their daily works.

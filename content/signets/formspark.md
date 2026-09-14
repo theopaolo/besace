@@ -6,7 +6,7 @@ extra:
   url: "https://formspark.io/about"
 taxonomies:
   category: [developpement]
-  tags: [tool, web]
+  tags: [web, webtool]
 ---
 
 Formspark is a reliable backend for your HTML forms. Start collecting data in a matter of clicks, no server required

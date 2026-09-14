@@ -5,7 +5,7 @@ extra:
   url: "http://agenziaindipendentediricerca.it/"
 taxonomies:
   category: [design]
-  tags: [crazy-cool, aspireinspire]
+  tags: [aspireinspire, crazy-cool]
 ---
 
 È un’agenzia indipendente di ricerca sociale e intervento urbano. / The Independent Research Agency is a research organisation specialising in social research and urban interventions.

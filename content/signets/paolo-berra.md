@@ -5,7 +5,7 @@ extra:
   url: "http://www.berrapaolo.it/works"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, graphisme]
+  tags: [design, graphisme]
 ---
 
 

@@ -17,5 +17,25 @@ son = "Son"
 jeu = "Jeu"
 societe = "Société"
 ressources = "Ressources"
+# Groupes d'étiquettes du panneau de filtres. Les étiquettes non listées vont dans « Autres ».
+[[extra.tag_groups]]
+nom = "Métier"
+tags = ["design", "graphisme", "typographie", "illustrator", "dessin", "photography", "art", "artist", "contemporary", "genart", "net-art", "creative-coding", "logo", "colorful", "edition", "magazine", "web-publication", "writing", "narration", "journal", "articles", "book"]
+[[extra.tag_groups]]
+nom = "Inspiration"
+tags = ["aspireinspire", "site-inspiration", "studio", "portfolio", "index", "directory", "inspiration", "unusual-ui", "crazy-cool", "web-toys", "expo", "collectif", "francais", "30s"]
+[[extra.tag_groups]]
+nom = "Outils"
+tags = ["webtool", "micro-tool", "micro-saas", "app", "note-app", "software", "service", "platform", "library", "framework", "api", "cms", "kirby", "leaflet", "webgl", "javascript", "json", "json-editor", "hosting", "selfhosted", "mastodon", "appressource", "ressourcefreelance", "time-management"]
+[[extra.tag_groups]]
+nom = "Technique"
+tags = ["coding", "blog", "tech", "computing", "digital", "web", "tutorial", "cours", "a11y", "ai", "agents", "neural-net", "mcp", "research", "science", "quality", "malleable", "situated-software", "home-cooked", "smallweb", "small-tech", "digitalgarden", "avadonware", "model-pour-lab"]
+[[extra.tag_groups]]
+nom = "Société"
+tags = ["logiciel-convivial", "convivialite", "illich", "cooperer", "ecologie", "energie", "low-tech", "limites", "couts", "numerique-de-controle", "survival", "startup", "education", "mediation", "coloque", "concept", "ressources"]
+[[extra.tag_groups]]
+nom = "Son et jeu"
+tags = ["soundui", "audio", "music", "webradio", "podcast", "instrument", "game-related", "game-theory", "playdate"]
+
 [markdown]
 external_links_target_blank = true

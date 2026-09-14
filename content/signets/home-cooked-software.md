@@ -6,7 +6,7 @@ extra:
   url: "https://maggieappleton.com/home-cooked-software"
 taxonomies:
   category: [societe]
-  tags: [convivialite, logiciel, logiciel-convivial]
+  tags: [convivialite, logiciel-convivial, software]
 ---
 
 The emerging golden age of home-cooked software, barefoot developers, and why the local-first community should help build it

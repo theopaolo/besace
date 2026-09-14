@@ -5,7 +5,7 @@ extra:
   url: "http://medeina.xyz/"
 taxonomies:
   category: [design]
-  tags: [graphiste, graphisme]
+  tags: [graphisme]
 ---
 
 Medeina Musteikyte Graphic Designer

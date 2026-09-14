@@ -5,7 +5,7 @@ extra:
   url: "https://apf.design/"
 taxonomies:
   category: [design]
-  tags: [website, aspireinspire]
+  tags: [aspireinspire, web]
 ---
 
 For the first edition we want to know what thrives you the most as a designer. That’s why we ask you to: Show Your Colours.

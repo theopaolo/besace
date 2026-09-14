@@ -152,7 +152,11 @@ def to_markdown(s, slug):
 def main(raindrop, notion=None):
     written = skipped = 0
     pris = {"index", *(p.stem for p in SIGNETS.glob("*.md"))}  # index.md est réservé par Zola
+    urls = {cle(m[1]) for p in SIGNETS.glob("*.md") if (m := re.search(r'^  url: "(.*?)"$', p.read_text(), re.M))}
     for s in lire(raindrop, notion):
+        if cle(s["url"]) in urls:  # déjà importé lors d'une passe précédente
+            skipped += 1
+            continue
         domaine = urlparse(s["url"]).netloc.removeprefix("www.")
         slug = slugify(titre(s)) or slugify(domaine)  # titre sans caractère latin
         if slug in pris:  # titres génériques (home, about) : le domaine départage

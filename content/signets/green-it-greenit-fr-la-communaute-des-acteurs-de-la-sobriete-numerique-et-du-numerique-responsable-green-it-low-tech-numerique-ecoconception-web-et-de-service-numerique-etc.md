@@ -5,7 +5,7 @@ extra:
   url: "https://www.greenit.fr"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, ressources]
+  tags: [ecologie, ressources]
 ---
 
 

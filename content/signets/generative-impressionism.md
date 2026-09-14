@@ -6,7 +6,7 @@ extra:
   url: "https://medium.com/@mattdesl/generative-impressionism-afa98ccb97da"
 taxonomies:
   category: [design]
-  tags: [genart, aspireinspire]
+  tags: [aspireinspire, genart]
 ---
 
 a simple algorithm for Impressionist-style paintings

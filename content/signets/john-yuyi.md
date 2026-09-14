@@ -6,7 +6,7 @@ extra:
   url: "https://johnyuyi.com/"
 taxonomies:
   category: [design]
-  tags: [photography, artist]
+  tags: [artist, photography]
 ---
 
 JOHN YUYI X Gucci #TFWGucci project 201703

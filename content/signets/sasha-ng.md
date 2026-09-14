@@ -5,7 +5,7 @@ extra:
   url: "http://sasha-ng.com/"
 taxonomies:
   category: [design]
-  tags: [design, studios-ateliers-agences]
+  tags: [design, studio]
 ---
 
 Website of Sasha Ng, web and graphic designer and front-end developer from Hong Kong.

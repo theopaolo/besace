@@ -6,7 +6,7 @@ extra:
   url: "https://nonymous.com/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 An anonymous communications company creating better, faster, and cheaper work.

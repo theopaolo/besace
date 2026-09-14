@@ -5,7 +5,7 @@ extra:
   url: "http://luk-e.com/"
 taxonomies:
   category: [design]
-  tags: [photography, artist]
+  tags: [artist, photography]
 ---
 
 Luke Evans - Artist & Photographer - Based in Herefordshire.

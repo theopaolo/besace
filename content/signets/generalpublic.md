@@ -6,7 +6,7 @@ extra:
   url: "http://www.generalpublic.fr/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, studios-ateliers-agences]
+  tags: [design, graphisme, studio]
 ---
 
 GeneralPublic — Graphisme & Direction artistique, Graphic Design & Art Direction. General Public Studio

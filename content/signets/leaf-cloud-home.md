@@ -5,7 +5,7 @@ extra:
   url: "https://www.leaf.cloud"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, hosting]
+  tags: [ecologie, hosting]
 ---
 
 

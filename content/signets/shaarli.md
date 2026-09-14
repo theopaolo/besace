@@ -5,7 +5,7 @@ extra:
   url: "https://shaarli.readthedocs.io/en/master/Download-and-Installation/"
 taxonomies:
   category: [developpement]
-  tags: [selfhosted, technology]
+  tags: [selfhosted, tech]
 ---
 
 

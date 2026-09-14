@@ -5,7 +5,7 @@ extra:
   url: "https://www.florianwmueller.com/portfolio/nightshift-shanghai/"
 taxonomies:
   category: [design]
-  tags: [photography, artist]
+  tags: [artist, photography]
 ---
 
 

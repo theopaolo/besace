@@ -5,7 +5,7 @@ extra:
   url: "https://small-tech.org/about/#small-technology"
 taxonomies:
   category: [societe]
-  tags: [smallweb, logiciel-convivial]
+  tags: [logiciel-convivial, smallweb]
 ---
 
 We’re a tiny and independent two-person not-for-profit based in Ireland. We’re working on building the Small Web.

@@ -5,7 +5,7 @@ extra:
   url: "https://krystal.uk/green"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, hosting]
+  tags: [ecologie, hosting]
 ---
 
 

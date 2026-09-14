@@ -5,7 +5,7 @@ extra:
   url: "https://roopavasudevan.com/artwork"
 taxonomies:
   category: [design]
-  tags: [art, artiste]
+  tags: [art, artist]
 ---
 
 

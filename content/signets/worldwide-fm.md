@@ -5,7 +5,7 @@ extra:
   url: "https://worldwidefm.net/"
 taxonomies:
   category: [son]
-  tags: [radiowebsite]
+  tags: [webradio]
 ---
 
 An award winning radio station with a global audience

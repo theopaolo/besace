@@ -6,7 +6,7 @@ extra:
   url: "https://cristianacouceiro.com/"
 taxonomies:
   category: [design]
-  tags: [illustrator, graphisme]
+  tags: [graphisme, illustrator]
 ---
 
 Cristiana Couceiro - illustrator and graphic designer

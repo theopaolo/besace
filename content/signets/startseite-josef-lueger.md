@@ -5,7 +5,7 @@ extra:
   url: "https://josef.online/"
 taxonomies:
   category: [design]
-  tags: [crazy-cool, aspireinspire]
+  tags: [aspireinspire, crazy-cool]
 ---
 
 Stell dir eine Immobilien- und Unternehmenswelt vor, in der Verändern, Gestalten und Entscheiden Lust und Zuversicht auslösen. josef formt tragfähige Rezepturen für Raumentwürfe und Kommunikation.

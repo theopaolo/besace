@@ -5,7 +5,7 @@ extra:
   url: "https://coatsink.com/games"
 taxonomies:
   category: [jeu]
-  tags: [game]
+  tags: [game-related]
 ---
 
 

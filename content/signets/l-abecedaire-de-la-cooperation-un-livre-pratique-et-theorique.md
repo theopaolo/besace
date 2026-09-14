@@ -6,7 +6,7 @@ extra:
   url: "https://lesecolohumanistes.fr/abecedaire-de-la-cooperation/"
 taxonomies:
   category: [societe]
-  tags: [coop, mediation, cooperer]
+  tags: [cooperer, mediation]
 ---
 
 Un livre à la fois pratiques (26 méthodes d'animation) et théorique (26 concept) : venez découvrir l'abécédaire de la coopération !

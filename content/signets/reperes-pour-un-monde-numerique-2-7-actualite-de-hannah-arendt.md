@@ -6,7 +6,7 @@ extra:
   url: "http://www.ttoarendt.com/2015/10/reperes-pour-un-monde-numerique-2-7.html"
 taxonomies:
   category: [societe]
-  tags: [ecologie-anthropocene]
+  tags: [ecologie]
 ---
 
 Cours donné le 5 novembre 2015 à l'Université du Temps Libre (UTL) d'Orléans Méthode de travail et d’échange Je rappelle la méthode de travail choisie pour rechercher nos repères pour un monde numérique...

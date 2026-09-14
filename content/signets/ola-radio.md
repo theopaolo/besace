@@ -5,7 +5,7 @@ extra:
   url: "https://olaradio.fr/Home"
 taxonomies:
   category: [son]
-  tags: [webradio, radiowebsite]
+  tags: [webradio]
 ---
 
 Ola Radio est une webradio culturelle spécialisée dans les musiques électroniques, qui veut mettre en avant la scène locale.

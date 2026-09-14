@@ -6,7 +6,7 @@ extra:
   url: "https://www.louiseveillard.com/infos"
 taxonomies:
   category: [design]
-  tags: [design, studios-ateliers-agences]
+  tags: [design, studio]
 ---
 
 Portfolio de Louis Eveillard, designer graphique et d’interaction indépendant à Paris.

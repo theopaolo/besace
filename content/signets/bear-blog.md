@@ -6,7 +6,7 @@ extra:
   url: "https://bearblog.dev/"
 taxonomies:
   category: [developpement]
-  tags: [blog, service, dev, micro-tool]
+  tags: [blog, service, coding, micro-tool]
 ---
 
 Free, no-nonsense, super-fast blogging

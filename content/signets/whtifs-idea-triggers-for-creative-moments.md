@@ -6,7 +6,7 @@ extra:
   url: "https://whtifs.com/"
 taxonomies:
   category: [developpement]
-  tags: [tool, web]
+  tags: [web, webtool]
 ---
 
 Because imagination never goes out of style

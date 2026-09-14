@@ -6,7 +6,7 @@ extra:
   url: "https://studio.samuelgadea.com/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, portfolio, studios-ateliers-agences]
+  tags: [design, graphisme, portfolio, studio]
 ---
 
 Studio Samuel Gadea⎜Studio de design graphique et de développement web multidisciplinaire basé à Marseille et Valence, France.

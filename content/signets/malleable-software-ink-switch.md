@@ -6,7 +6,7 @@ extra:
   url: "https://www.inkandswitch.com/essay/malleable-software"
 taxonomies:
   category: [societe]
-  tags: [malleable, software, logiciel-convivial]
+  tags: [logiciel-convivial, malleable, software]
 ---
 
 The original promise of personal computing was a new kind of clay. Instead, we got appliances: built far away, sealed, unchangeable. In this essay, we envision malleable software: tools that users can reshape with minimal friction to suit their unique needs.

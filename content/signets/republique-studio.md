@@ -5,7 +5,7 @@ extra:
   url: "https://republique.studio/"
 taxonomies:
   category: [design]
-  tags: [graphiste, studio, design, studios-ateliers-agences]
+  tags: [design, graphisme, studio]
 ---
 
 République Studio est un atelier de direction artistique et design graphique situé à Paris.

@@ -6,7 +6,7 @@ extra:
   url: "https://www.jobs.art"
 taxonomies:
   category: [design]
-  tags: [tool, art-cntmpr]
+  tags: [contemporary, webtool]
 ---
 
 Jobs.art makes it simple and easy for everyone. As a new international listings website, we focus solely on art-related positions and have simplified the search process for finding both new talent and new work anywhere in the world. Building a career in art is tough.

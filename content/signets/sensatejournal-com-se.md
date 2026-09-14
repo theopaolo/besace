@@ -6,7 +6,7 @@ extra:
   url: "http://sensatejournal.com/"
 taxonomies:
   category: [design]
-  tags: [science, journal, graphisme]
+  tags: [graphisme, journal, science]
 ---
 
 SE

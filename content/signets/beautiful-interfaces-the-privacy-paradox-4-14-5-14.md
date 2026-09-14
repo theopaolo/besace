@@ -5,7 +5,7 @@ extra:
   url: "http://reversespace.org/beautiful-interfaces/"
 taxonomies:
   category: [design]
-  tags: [art, digital, expo, artist]
+  tags: [art, artist, digital, expo]
 ---
 
 

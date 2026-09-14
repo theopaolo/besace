@@ -5,7 +5,7 @@ extra:
   url: "https://www.velvetyne.fr/"
 taxonomies:
   category: [design]
-  tags: [typo, graphisme]
+  tags: [typographie, graphisme]
 ---
 
 …

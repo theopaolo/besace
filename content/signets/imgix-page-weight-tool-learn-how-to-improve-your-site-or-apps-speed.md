@@ -6,7 +6,7 @@ extra:
   url: "https://pageweight.imgix.com"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, webtool]
+  tags: [ecologie, webtool]
 ---
 
 

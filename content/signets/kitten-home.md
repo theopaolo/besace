@@ -5,7 +5,7 @@ extra:
   url: "https://kitten.small-web.org/"
 taxonomies:
   category: [societe]
-  tags: [smallweb, logiciel-convivial]
+  tags: [logiciel-convivial, smallweb]
 ---
 
 

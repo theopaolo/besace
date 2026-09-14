@@ -5,7 +5,7 @@ extra:
   url: "https://collectif.greenit.fr/ecoconception-web/115-bonnes-pratiques-eco-conception_web.html"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb]
+  tags: [ecologie]
 ---
 
 

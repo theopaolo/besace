@@ -6,7 +6,7 @@ extra:
   url: "http://www.goodgoodland.com/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 Founded in 2008, goodgood is an interdisciplinary design studio focusing on social impact with offices in Boston & Detroit. We seek to create unexpected, joyful experiences in the everyday.

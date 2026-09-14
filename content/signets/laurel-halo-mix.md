@@ -5,7 +5,7 @@ extra:
   url: "http://www.laurelhalo.com/mixes"
 taxonomies:
   category: [son]
-  tags: [radio]
+  tags: [webradio]
 ---
 
 

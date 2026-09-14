@@ -5,7 +5,7 @@ extra:
   url: "https://www.pierrejeanneau.com/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, studios-ateliers-agences]
+  tags: [design, graphisme, studio]
 ---
 
 Design graphique et direction artistique

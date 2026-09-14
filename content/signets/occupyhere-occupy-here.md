@@ -6,7 +6,7 @@ extra:
   url: "https://github.com/occupyhere/occupy.here"
 taxonomies:
   category: [developpement]
-  tags: [technologie, selfhosted, internet, technology]
+  tags: [selfhosted, tech, web]
 ---
 
 A tiny self-contained darknet. Contribute to occupyhere/occupy.here development by creating an account on GitHub.

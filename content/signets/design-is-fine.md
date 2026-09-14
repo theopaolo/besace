@@ -6,7 +6,7 @@ extra:
   url: "http://www.design-is-fine.org/tagged/1930s"
 taxonomies:
   category: [design]
-  tags: [design, inspiration, graphisme]
+  tags: [design, graphisme, inspiration]
 ---
 
 

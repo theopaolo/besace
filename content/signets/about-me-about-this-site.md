@@ -5,7 +5,7 @@ extra:
   url: "http://mkremins.github.io/about/"
 taxonomies:
   category: [jeu]
-  tags: [blog, gamedev, game-related]
+  tags: [blog, game-related]
 ---
 
 

@@ -6,7 +6,7 @@ extra:
   url: "https://esoteric.codes/?ref=sidebar"
 taxonomies:
   category: [developpement]
-  tags: [technology]
+  tags: [tech]
 ---
 
 Languages, platforms, and systems that break from the norms of computing

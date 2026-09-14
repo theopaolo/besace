@@ -5,7 +5,7 @@ extra:
   url: "https://omotesando.eu/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 OMOTESANDO IS A DIRECTING DUO WHICH DEVELOPS ARTISTIC, COMERCIAL AND FICTIONAL PROJECTS. IN OMOTESANDO WE BELIEVE EACH IDEA NEEDS A WORLD IN WICH TO DEVELOP AND A CONCEPTUAL FRAMEWORK IN WHICH TO GROW.

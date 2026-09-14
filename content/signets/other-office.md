@@ -6,7 +6,7 @@ extra:
   url: "http://otheroffice.net/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 Other Office is the design practice of Simon Sweeney and Shauna Buckley. We make identities, websites, installations and printed matter.

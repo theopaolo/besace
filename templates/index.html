@@ -17,15 +17,19 @@
 </p>
 <div class="barre" role="search">
   {% if all_tags.items %}
+  {# Étiquettes par groupe (config.extra.tag_groups), triées par usage, les rares (< 3 signets) repliées. #}
+  {% set par_usage = all_tags.items | sort(attribute="page_count") | reverse %}
+  {% set_global places = [] %}
   <div class="container" data-width="content" id="filtres-tags" hidden>
     <div class="filtres-tags" role="group" aria-label="Filtrer par étiquette">
-      {% for term in all_tags.items %}<button
-        type="button"
-        data-tag="{{ term.slug }}"
-        aria-pressed="false"
-      >
-        {{ term.name }}</button
-      >{% endfor %}
+      {% for groupe in config.extra.tag_groups | default(value=[]) %}{% set nom = groupe.nom %}{% set liste = groupe.tags %}
+        {% set_global tri = [] %}
+        {% for term in par_usage %}{% if term.slug in liste %}{% set_global tri = [...tri, term] %}{% set_global places = [...places, term.slug] %}{% endif %}{% endfor %}
+        {% if tri %}{% include "tags_groupe.html" %}{% endif %}
+      {% endfor %}
+      {% set_global tri = [] %}
+      {% for term in par_usage %}{% if term.slug not in places %}{% set_global tri = [...tri, term] %}{% endif %}{% endfor %}
+      {% if tri %}{% set nom = "Autres" %}{% include "tags_groupe.html" %}{% endif %}
     </div>
   </div>
   {% endif %}
@@ -75,6 +79,7 @@
   const etiqPanel = document.getElementById("filtres-tags");
   const boutonsCat = document.querySelectorAll("[data-cat]");
   const boutonsTag = document.querySelectorAll("[data-tag]");
+  const compteurs = new Map([...boutonsTag].map((b) => [b.dataset.tag, b.querySelector(".n")]));
   const fiches = document.querySelectorAll("#grille .fiche");
   const grille = document.getElementById("grille");
   const boutonsVue = document.querySelectorAll("[data-vue]");
@@ -102,6 +107,7 @@
   function appliquer() {
     const q = mots(normaliser(champ.value));
     let visibles = 0;
+    const restants = new Map();
     for (const f of fiches) {
       const cats = mots(f.dataset.categorie);
       const tags = mots(f.dataset.tags);
@@ -112,7 +118,16 @@
       const okTags = [...tagsActifs].every((t) => tags.includes(t));
       const okQ = q.every((mot) => texte.includes(mot));
       f.hidden = !(okCat && okTags && okQ);
-      if (!f.hidden) visibles++;
+      if (!f.hidden) {
+        visibles++;
+        for (const t of tags) restants.set(t, (restants.get(t) ?? 0) + 1);
+      }
+    }
+    // Rétrécit le panneau : une étiquette sans résultat combiné est désactivée.
+    for (const b of boutonsTag) {
+      const n = restants.get(b.dataset.tag) ?? 0;
+      b.disabled = n === 0 && !tagsActifs.has(b.dataset.tag);
+      compteurs.get(b.dataset.tag).textContent = n;
     }
     statut.textContent =
       visibles === 0

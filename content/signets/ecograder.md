@@ -5,7 +5,7 @@ extra:
   url: "https://ecograder.com"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb]
+  tags: [ecologie]
 ---
 
 Reduce emissions, improve performance, meet your website goals faster.

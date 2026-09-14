@@ -5,7 +5,7 @@ extra:
   url: "https://benoitb.work/"
 taxonomies:
   category: [design]
-  tags: [graphiste, dev, design, graphisme]
+  tags: [coding, design, graphisme]
 ---
 
 Benoit Böhnke conçoit et réalise des identités visuelles et des sites Web.

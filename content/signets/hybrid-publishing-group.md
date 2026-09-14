@@ -5,7 +5,7 @@ extra:
   url: "https://hpg.io"
 taxonomies:
   category: [developpement]
-  tags: [tool, web-publication]
+  tags: [web-publication, webtool]
 ---
 
 modular solutions for hybrid publishing

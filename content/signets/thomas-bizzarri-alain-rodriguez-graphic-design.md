@@ -5,7 +5,7 @@ extra:
   url: "http://www.bizzarri-rodriguez.com/"
 taxonomies:
   category: [design]
-  tags: [design, studios-ateliers-agences]
+  tags: [design, studio]
 ---
 
 Thomas Bizzarri, Alain Rodriguez

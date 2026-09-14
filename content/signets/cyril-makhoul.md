@@ -5,7 +5,7 @@ extra:
   url: "http://www.cyrilmakhoul.eu/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, graphisme]
+  tags: [design, graphisme]
 ---
 
 Designer graphique indépendant.

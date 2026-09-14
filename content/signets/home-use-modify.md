@@ -5,7 +5,7 @@ extra:
   url: "http://usemodify.com/"
 taxonomies:
   category: [design]
-  tags: [typo, graphisme]
+  tags: [graphisme, typographie]
 ---
 
 

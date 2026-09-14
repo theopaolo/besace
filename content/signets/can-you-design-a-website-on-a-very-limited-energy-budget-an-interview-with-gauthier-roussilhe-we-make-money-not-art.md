@@ -6,7 +6,7 @@ extra:
   url: "https://we-make-money-not-art.com/can-you-design-a-website-on-a-very-limited-energy-budget-an-interview-with-gauthier-roussilhe"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb]
+  tags: [ecologie]
 ---
 
 

@@ -6,7 +6,7 @@ extra:
   url: "https://www.websitecarbon.com"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, webtool]
+  tags: [ecologie, webtool]
 ---
 
 

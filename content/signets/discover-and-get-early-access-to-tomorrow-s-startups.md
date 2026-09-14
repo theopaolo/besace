@@ -5,7 +5,7 @@ extra:
   url: "https://betalist.com/"
 taxonomies:
   category: [developpement]
-  tags: [startup, app, ressources, web]
+  tags: [app, ressources, startup, web]
 ---
 
 BetaList provides an overview of upcoming internet startups. Discover and get early access to the future.

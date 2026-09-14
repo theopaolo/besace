@@ -5,7 +5,7 @@ extra:
   url: "https://ravenandwood.agency/"
 taxonomies:
   category: [design]
-  tags: [studio, studios-ateliers-agences]
+  tags: [studio]
 ---
 
 Design and research agency. Design for connectedness

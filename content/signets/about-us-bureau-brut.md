@@ -5,7 +5,7 @@ extra:
   url: "https://bureaubrut.com/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 

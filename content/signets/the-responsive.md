@@ -6,7 +6,7 @@ extra:
   url: "http://the-responsive.com/"
 taxonomies:
   category: [design]
-  tags: [design, aspireinspire]
+  tags: [aspireinspire, design]
 ---
 
 Gallery showcasing the finest responsive design

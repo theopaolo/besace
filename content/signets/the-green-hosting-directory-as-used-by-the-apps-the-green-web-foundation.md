@@ -5,7 +5,7 @@ extra:
   url: "https://www.thegreenwebfoundation.org/directory"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, hosting]
+  tags: [ecologie, hosting]
 ---
 
 

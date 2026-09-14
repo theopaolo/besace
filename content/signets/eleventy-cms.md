@@ -6,7 +6,7 @@ extra:
   url: "https://cloudcannon.com/eleventy-cms/"
 taxonomies:
   category: [developpement]
-  tags: [webtool, service, cms, web]
+  tags: [cms, service, web, webtool]
 ---
 
 An Eleventy CMS to collaborate with your team to build incredibly fast static sites with a wide range of 11ty-supported templating languages!

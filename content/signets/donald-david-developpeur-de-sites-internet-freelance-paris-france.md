@@ -6,7 +6,7 @@ extra:
   url: "http://donalddavid.fr/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 Je crée des thèmes sur mesure pour les CMS Wordpress et Kirby et Shopify pour les sites e-commerces

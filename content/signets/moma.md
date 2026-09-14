@@ -6,7 +6,7 @@ extra:
   url: "https://www.moma.org/explore/inside_out/2010/02/12/rediscovering-the-new-typography/"
 taxonomies:
   category: [design]
-  tags: [30s, design, inspiration, graphisme]
+  tags: [30s, design, graphisme, inspiration]
 ---
 
 MoMA | Rediscovering The New Typography

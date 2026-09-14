@@ -6,7 +6,7 @@ extra:
   url: "https://harriorrihar.myportfolio.com/"
 taxonomies:
   category: [design]
-  tags: [illustrator, artist]
+  tags: [artist, illustrator]
 ---
 
 

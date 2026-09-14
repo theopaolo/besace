@@ -5,7 +5,7 @@ extra:
   url: "https://limitesnumeriques.fr/travaux-productions"
 taxonomies:
   category: [societe]
-  tags: [limites, numerique, logiciel-convivial]
+  tags: [digital, limites, logiciel-convivial]
 ---
 
 

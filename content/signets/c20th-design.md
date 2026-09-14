@@ -6,7 +6,7 @@ extra:
   url: "https://c20thdesign.wordpress.com/"
 taxonomies:
   category: [design]
-  tags: [design, inspiration, graphisme]
+  tags: [design, graphisme, inspiration]
 ---
 
 Select & apply info on design history

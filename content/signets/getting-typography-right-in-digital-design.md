@@ -6,7 +6,7 @@ extra:
   url: "https://medium.springboard.com/the-guide-to-getting-typography-right-in-digital-design-bb61214ff3ad"
 taxonomies:
   category: [design]
-  tags: [design, typographie, articles]
+  tags: [articles, design, typographie]
 ---
 
 Typography can make or break a product. Here’s how to excel at it

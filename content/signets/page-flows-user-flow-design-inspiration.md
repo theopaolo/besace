@@ -6,7 +6,7 @@ extra:
   url: "https://pageflows.com/"
 taxonomies:
   category: [developpement]
-  tags: [site-inspiration, micro-saas]
+  tags: [micro-saas, site-inspiration]
 ---
 
 See how top brands design their onboarding, upgrading, downgrading and other key user flows

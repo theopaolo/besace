@@ -6,7 +6,7 @@ extra:
   url: "http://jolipunk.over-blog.com/"
 taxonomies:
   category: [design]
-  tags: [art, contemporary, survival, artist]
+  tags: [art, artist, contemporary, survival]
 ---
 
 art

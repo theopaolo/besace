@@ -6,7 +6,7 @@ extra:
   url: "https://jsoncrack.com/"
 taxonomies:
   category: [developpement]
-  tags: [tool, json, tech, json-editor, micro-tool]
+  tags: [webtool, json, tech, json-editor, micro-tool]
 ---
 
 JSON Crack Editor is a tool for visualizing into graphs, analyzing, editing, formatting, querying, transforming and validating JSON, CSV, YAML, XML, and more.

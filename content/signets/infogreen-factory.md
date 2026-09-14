@@ -5,7 +5,7 @@ extra:
   url: "https://infogreenfactory.green/"
 taxonomies:
   category: [design]
-  tags: [ecoweb, eco, studios-ateliers-agences]
+  tags: [ecologie, studio]
 ---
 
 Site officiel d'IF - Infogreen Factory, conseil et formation pour un numérique plus responsable : éco‑conçu, accessible et robuste.

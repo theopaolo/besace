@@ -6,7 +6,7 @@ extra:
   url: "https://great.design/"
 taxonomies:
   category: [design]
-  tags: [graphiste, studio, design, studios-ateliers-agences]
+  tags: [design, graphisme, studio]
 ---
 
 Wir sind Great. Wir machen Design. In unseren Büros in Wien und Bregenz entwickeln wir Identities, Corporate Design, Brand Communication und Publishing.

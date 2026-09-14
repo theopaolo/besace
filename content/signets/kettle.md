@@ -5,7 +5,7 @@ extra:
   url: "https://wearekettle.com/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 We are kettle, an independent digital agency. We use design and technology to create experiences people can't help but ♥︎.

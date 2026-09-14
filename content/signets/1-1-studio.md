@@ -5,7 +5,7 @@ extra:
   url: "https://www.1of1studio.com/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 

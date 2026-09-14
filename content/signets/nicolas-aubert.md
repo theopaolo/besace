@@ -5,7 +5,7 @@ extra:
   url: "https://n--a.fr/"
 taxonomies:
   category: [design]
-  tags: [graphiste, graphisme]
+  tags: [graphisme]
 ---
 
 

@@ -6,7 +6,7 @@ extra:
   url: "https://www.terra-num.fr/terra-num-1"
 taxonomies:
   category: [societe]
-  tags: [coop, eco, studio, cooperer]
+  tags: [cooperer, ecologie, studio]
 ---
 
 

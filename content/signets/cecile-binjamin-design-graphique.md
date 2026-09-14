@@ -5,7 +5,7 @@ extra:
   url: "http://www.cecilebinjamin.fr/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, graphisme]
+  tags: [design, graphisme, studio]
 ---
 
 design graphique, identité, édition, site internet

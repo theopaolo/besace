@@ -6,7 +6,7 @@ extra:
   url: "http://pierredebelgique.fr/"
 taxonomies:
   category: [design]
-  tags: [graphiste, graphisme]
+  tags: [graphisme]
 ---
 
 Pierre Rousteau « Pierre de Belgique », création graphique, photographique et plastique.

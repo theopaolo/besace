@@ -5,7 +5,7 @@ extra:
   url: "https://www.greengeeks.com"
 taxonomies:
   category: [developpement]
-  tags: [ecoweb, service]
+  tags: [ecologie, service]
 ---
 
 

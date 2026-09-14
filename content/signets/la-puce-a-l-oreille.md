@@ -6,7 +6,7 @@ extra:
   url: "https://lpalo.com/"
 taxonomies:
   category: [design]
-  tags: [colorful, aspireinspire]
+  tags: [aspireinspire, colorful]
 ---
 
 La puce à l’oreille produit des balados (podcasts) décalés pour des enfants allumés! Découvrez tous nos contenus sur notre site.

@@ -6,7 +6,7 @@ extra:
   url: "https://ateliertoutvabien.com/"
 taxonomies:
   category: [design]
-  tags: [graphiste, design, studio, studios-ateliers-agences]
+  tags: [design, graphisme, studio]
 ---
 
 Atelier Tout va bien⎜Conception et design graphique à Dijon, supports imprimés et numériques, livres, identités graphiques, affiches…

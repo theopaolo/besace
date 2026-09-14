@@ -5,7 +5,7 @@ extra:
   url: "https://duuuradio.fr/"
 taxonomies:
   category: [son]
-  tags: [webradio, radiowebsite]
+  tags: [webradio]
 ---
 
 *Duuu est une radio dédiée à la création contemporaine. Fondée en 2012 par des artistes, cette radio est née du désir de faire entendre des situations de réflexion et de travail.

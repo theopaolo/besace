@@ -6,7 +6,7 @@ extra:
   url: "https://almond.studio/"
 taxonomies:
   category: [design]
-  tags: [studios-ateliers-agences]
+  tags: [studio]
 ---
 
 Studio Almond believes in the power of three: absolute technical leadership, inspired design and a client dedicated to best practice for their business.

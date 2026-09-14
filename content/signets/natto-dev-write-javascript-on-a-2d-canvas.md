@@ -6,7 +6,7 @@ extra:
   url: "https://natto.dev/"
 taxonomies:
   category: [developpement]
-  tags: [webtool, javascript, programming, creative-coding]
+  tags: [coding, creative-coding, javascript, webtool]
 ---
 
 Spatial javascript environment

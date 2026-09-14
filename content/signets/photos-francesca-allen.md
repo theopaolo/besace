@@ -5,7 +5,7 @@ extra:
   url: "https://www.francesca-allen.co.uk/photos#22"
 taxonomies:
   category: [design]
-  tags: [photography, artist]
+  tags: [artist, photography]
 ---
 
 Francesca Jane Allen

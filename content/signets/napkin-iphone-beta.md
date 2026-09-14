@@ -6,7 +6,7 @@ extra:
   url: "https://napkin.one/?via=francesco&ref=toolfinder.co"
 taxonomies:
   category: [developpement]
-  tags: [note-app, tool, appressource]
+  tags: [appressource, note-app, webtool]
 ---
 
 Let your best ideas shape your mind: Napkin is an app to easily collect good ideas and keep them in focus.

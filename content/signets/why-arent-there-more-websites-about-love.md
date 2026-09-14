@@ -6,7 +6,7 @@ extra:
   url: "https://escapethealgorithm.substack.com/p/why-arent-there-more-websites-about"
 taxonomies:
   category: [ressources]
-  tags: [artiste, net-art]
+  tags: [artist, net-art]
 ---
 
 A conversation with Chia Amisola

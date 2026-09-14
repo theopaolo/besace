@@ -6,7 +6,7 @@ extra:
   url: "https://dow-smith.com/"
 taxonomies:
   category: [design]
-  tags: [design, studios-ateliers-agences]
+  tags: [design, studio]
 ---
 
 A web and interactive design practice led by Jake Dow-Smith with a focus on the design and build of unique websites for creative companies, artistic institutions and design-led practitioners.
