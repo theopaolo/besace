@@ -1,6 +1,6 @@
-base_url = "https://glane.ludique.dev"
-title = "Glane"
-description = "Bibliothèque collective de signets"
+base_url = "https://besace.ludique.dev"
+title = "Besace"
+description = "Signets personnels de Théo Goedert"
 default_language = "fr"
 compile_sass = false
 # Les sources d'images ne sont pas copiées : seules les versions redimensionnées servent.
