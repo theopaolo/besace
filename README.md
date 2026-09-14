@@ -4,6 +4,8 @@ Glane est une bibliothèque collective de liens au format Markdown. Chaque signe
 
 Le site est accessible à l'adresse : [glane.ludique.dev](https://glane.ludique.dev).
 
+Une partie des signets provient de la [veille tech d'Anaïs Sparesotto](https://github.com/anais0210/veille-tech).
+
 ### Ajouter ou modifier un signet
 
 Ouvrez \[app.pagescms.org\](https://app.pagescms.org) dans votre navigateur. Connectez-vous avec votre compte GitHub. Choisissez le dépôt \*glane\*.
@@ -41,9 +43,22 @@ Les catégories et les pages de tags sont créées automatiquement à partir des
 
 ### Site
 
-Le site est généré par [Zola](https://www.getzola.org/), un binaire sans dépendances. En local :
+Le site est généré par [Zola](https://www.getzola.org/).
 
-```sh
-brew install zola
-zola serve
+- [Guide d'intallation](https://www.getzola.org/documentation/getting-started/installation/)
+
+#### Commandes principales :
+
+**Lance un server local**
+
+```bash
+zola start
 ```
+
+**Build le suite**
+
+```bash
+zola build
+```
+
+Pour plus d’informations, se référer à la documentation de Zola.
