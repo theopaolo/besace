@@ -11,7 +11,8 @@
 @layer settings {
   :root {
     color-scheme: light dark;
-    --font-sans: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
+    --font-sans:
+      "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
     --bg: light-dark(#e9e9f0, #17181a);
     --fg: light-dark(#1e1e24, #e8e6e0);
     --muted: light-dark(#5f6070, #a09c93);
@@ -404,7 +405,8 @@
     padding: var(--space-s) var(--space-m) var(--space-m);
     display: flow-root;
     min-inline-size: 0;
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12)) drop-shadow(0 6px 12px rgb(0 0 0 / 0.1));
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12))
+      drop-shadow(0 6px 12px rgb(0 0 0 / 0.1));
   }
   .fiche[data-categorie~="design"],
   .dossier[data-categorie~="design"] {
@@ -508,12 +510,13 @@
     background: var(--postit);
     color: #1e1e24;
     --accent: #4d6531; /* le post-it reste clair dans les deux thèmes */
-    padding: var(--space-s) var(--space-m);
+    padding: var(--space-s);
     margin-block-start: var(--space-2xs);
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
     transform: rotate(-0.6deg);
     font-size: var(--step-1);
     clear: both;
+    margin-bottom: 1rem;
   }
   .postit > * {
     margin-block: 0;
@@ -596,7 +599,8 @@
     margin-block-start: var(--tab-h);
     background: var(--papier);
     padding: var(--space-m) var(--space-l) var(--space-l);
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12)) drop-shadow(0 8px 16px rgb(0 0 0 / 0.12));
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12))
+      drop-shadow(0 8px 16px rgb(0 0 0 / 0.12));
   }
   .dossier .fiche-onglet a {
     text-decoration: none;
