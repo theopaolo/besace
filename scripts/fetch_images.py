@@ -61,10 +61,16 @@ def image_de(url):
 LARGEUR_MAX = 1200  # l'image la plus grande servie est l'og:image en 1200 px
 
 
+SRGB = "/System/Library/ColorSync/Profiles/sRGB Profile.icc"
+
+
 def reduire(chemin):
-    """Ramène l'image à 1200 px de large avec sips (macOS), sinon la laisse telle quelle."""
+    """Ramène l'image à 1200 px de large et en sRGB avec sips (macOS), sinon la laisse telle quelle.
+
+    Le passage en sRGB convertit les images en niveaux de gris, que l'encodeur webp de Zola refuse.
+    """
     if shutil.which("sips"):
-        subprocess.run(["sips", "-Z", str(LARGEUR_MAX), str(chemin)], capture_output=True)
+        subprocess.run(["sips", "-Z", str(LARGEUR_MAX), "-m", SRGB, str(chemin)], capture_output=True)
 
 
 def traiter(fiche):
