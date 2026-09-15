@@ -1,5 +1,5 @@
 ---
-title: "(124) Touring the history of Nintendo's creative tools 🌱 Castle Spring Party 2021 - YouTube - Castle"
+title: "Touring the history of Nintendo's creative tools"
 date: 2022-09-26
 extra:
   image: "/images/124-touring-the-history-of-nintendo-s-creative-tools-castle-spring-party-2021-youtube-castle.jpg"

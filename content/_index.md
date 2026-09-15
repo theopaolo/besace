@@ -1,3 +1,3 @@
 +++
-sort_by = "title"
+sort_by = "date"
 +++

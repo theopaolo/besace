@@ -1,5 +1,5 @@
 ---
-title: "☜(˚▽˚)☞"
+title: "Talia Cotton"
 date: 2020-12-15
 extra:
   url: "https://taliacotton.com/"

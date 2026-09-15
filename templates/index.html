@@ -1,20 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="visually-hidden">{{ config.title }}, {{ config.description | lower }}</h1>
+<h1 class="visually-hidden">{{ config.title }}, {{ config.description }}</h1>
 {% if section.pages %}
 {% set all_tags = get_taxonomy(kind="tags") %}
 {% set cats = get_taxonomy(kind="category") %}
 {% set labels = config.extra.categories %}
 {% set_global unclassified = [] %}
 {% for page in section.pages %}{% if not page.taxonomies.category %}{% set_global unclassified = [...unclassified, page] %}{% endif %}{% endfor %}
+{% set_global annees = [] %}
+{% for page in section.pages %}{% if page.year and page.year not in annees %}{% set_global annees = [...annees, page.year] %}{% endif %}{% endfor %}
+{% set annees = annees | sort | reverse %}
 {% set heading_level = 2 %}
-<ul class="grille" id="grille" role="list">
-  {% for page in section.pages %}{% include "signet.html" %}{% endfor %}
-</ul>
-<p class="vide" id="vide" hidden>
-  Aucun signet ne correspond à cette recherche.
-  <button type="button" id="reinitialiser">Tout réafficher</button>.
-</p>
 <div class="barre" role="search">
   {% if all_tags.items %}
   {# Étiquettes par groupe (config.extra.tag_groups), triées par usage, les rares (< 3 signets) repliées. #}
@@ -69,6 +65,34 @@
   </div>
 </div>
 
+{# Frise des années, sur le bord droit. #}
+<nav class="frise" aria-label="Filtrer par année">
+  {% for a in annees %}<button type="button" data-annee="{{ a }}" aria-pressed="false">{{ a }}</button>{% endfor %}
+</nav>
+{# Outils épinglés en bas à droite : zoom, dé, noir et blanc. #}
+<div class="outils" role="group" aria-label="Outils">
+  <button type="button" data-zoom="1" aria-label="Agrandir les fiches">+</button>
+  <button type="button" data-zoom="-1" aria-label="Réduire les fiches">−</button>
+  <button type="button" id="hasard" class="de" aria-label="Un signet au hasard">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.8" fill="currentColor"/><circle cx="16" cy="8" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="8" cy="16" r="1.8" fill="currentColor"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>
+  </button>
+  <button type="button" id="nb" class="nb" aria-pressed="false" aria-label="Noir et blanc"><span></span></button>
+</div>
+
+{# Volet : la fiche s'ouvre sur le tableau, chargée depuis sa page. #}
+<aside class="volet" id="volet" hidden role="dialog" aria-modal="true" aria-labelledby="volet-titre">
+  <button type="button" class="volet-fermer" id="volet-fermer" aria-label="Fermer">×</button>
+  <div class="volet-contenu" id="volet-contenu"></div>
+</aside>
+
+<ul class="grille" id="grille" role="list">
+  {% for page in section.pages %}{% include "signet.html" %}{% endfor %}
+</ul>
+<p class="vide" id="vide" hidden>
+  Rien ne correspond à ces filtres.
+  <button type="button" id="reinitialiser">Tout réafficher</button>
+</p>
+
 <script type="module">
   const champ = document.getElementById("recherche");
   const statut = document.getElementById("statut");
@@ -83,6 +107,143 @@
   const fiches = document.querySelectorAll("#grille .fiche");
   const grille = document.getElementById("grille");
   const boutonsVue = document.querySelectorAll("[data-vue]");
+  new ResizeObserver(([e]) =>
+    document.documentElement.style.setProperty("--barre-h", `${e.contentRect.height}px`)
+  ).observe(document.querySelector(".barre"));
+  const boutonsAnnee = document.querySelectorAll(".frise [data-annee]");
+
+  // Zoom : paliers de 0.4 à 1.4, molette avec ctrl/cmd ou boutons, ancré sur la position de défilement.
+  const paliers = [0.4, 0.55, 0.7, 0.85, 1, 1.2, 1.4];
+  let zoom = 1;
+  function majZoom(z, ancre = window.innerHeight / 2) {
+    const avant = (window.scrollY + ancre) / zoom;
+    zoom = z;
+    grille.style.setProperty("--zoom", z);
+    grille.toggleAttribute("data-dense", z < 0.7);
+    majBoutonsZoom();
+    window.scrollTo(0, avant * z - ancre);
+    try { localStorage.setItem("zoom", z); } catch {}
+  }
+  function pasZoom(sens) {
+    const i = paliers.indexOf(zoom) + sens;
+    if (paliers[i]) majZoom(paliers[i]);
+  }
+  function majBoutonsZoom() {
+    for (const b of document.querySelectorAll("[data-zoom]"))
+      b.disabled = !paliers[paliers.indexOf(zoom) + +b.dataset.zoom];
+  }
+  for (const b of document.querySelectorAll("[data-zoom]"))
+    b.addEventListener("click", () => pasZoom(+b.dataset.zoom));
+  window.addEventListener("wheel", (e) => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    e.preventDefault();
+    pasZoom(e.deltaY < 0 ? 1 : -1);
+  }, { passive: false });
+  try { const z = +localStorage.getItem("zoom"); if (paliers.includes(z)) majZoom(z); } catch {}
+  majBoutonsZoom();
+
+  // Noir et blanc.
+  const nb = document.getElementById("nb");
+  function majNb(on) {
+    document.documentElement.toggleAttribute("data-nb", on);
+    nb.setAttribute("aria-pressed", String(on));
+    try { localStorage.setItem("nb", on ? "1" : ""); } catch {}
+  }
+  nb.addEventListener("click", () => majNb(!document.documentElement.hasAttribute("data-nb")));
+  try { if (localStorage.getItem("nb")) majNb(true); } catch {}
+
+  // Volet : clic sur un titre → fetch de la page, on injecte #dossier, l'URL suit.
+  const volet = document.getElementById("volet");
+  const voletContenu = document.getElementById("volet-contenu");
+  const voletFermer = document.getElementById("volet-fermer");
+  let origine = null;
+  async function ouvrir(href, pousser = true) {
+    const html = await (await fetch(href)).text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const dossier = doc.getElementById("dossier");
+    if (!dossier) { location.href = href; return; }
+    // Titre en h2 dans le volet (le h1 reste celui de la page), et repère pour aria-labelledby.
+    const h1 = dossier.querySelector("h1");
+    if (h1) { const h2 = document.createElement("h2"); h2.className = h1.className; h2.id = "volet-titre"; h2.append(...h1.childNodes); h1.replaceWith(h2); }
+    voletContenu.replaceChildren(dossier);
+    volet.hidden = false;
+    for (const el of document.querySelectorAll("body > :not(main):not(script), #contenu > :not(#volet)")) el.inert = true;
+    volet.scrollTop = 0;
+    requestAnimationFrame(() => volet.classList.add("ouvert"));
+    voletFermer.focus();
+    if (pousser) history.pushState({ volet: href }, "", href);
+  }
+  function fermer(pousser = true) {
+    if (volet.hidden) return;
+    volet.classList.remove("ouvert");
+    volet.addEventListener("transitionend", () => { volet.hidden = true; }, { once: true });
+    for (const el of document.querySelectorAll("[inert]")) el.inert = false;
+    if (pousser) history.pushState({}, "", location.pathname.startsWith("/signets/") ? "/" : location.href);
+    origine?.focus();
+  }
+  // Étiquette ou dossier cliqués (fiche ou volet) : on filtre le tableau sur place, sans changer de page.
+  function filtrerDepuisLien(a) {
+    const m = a.pathname.match(/^\/(tags|categories)\/([^/]+)\/?$/);
+    if (!m) return false;
+    if (m[1] === "tags") {
+      const b = document.querySelector(`.filtres-tags [data-tag="${m[2]}"]`);
+      if (b) { tagsActifs.clear(); for (const x of boutonsTag) x.setAttribute("aria-pressed", "false"); b.click(); }
+    } else {
+      catActif = m[2];
+      majCats();
+      appliquer();
+    }
+    return true;
+  }
+  document.addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    const a = e.target.closest("a");
+    if (a && a.matches(".fiche-titre a, .voisins a")) {
+      e.preventDefault();
+      origine = a;
+      ouvrir(a.href);
+      return;
+    }
+    if (a && a.origin === location.origin && filtrerDepuisLien(a)) {
+      e.preventDefault();
+      fermer();
+      return;
+    }
+    // Clic en dehors du volet : on le ferme.
+    if (!volet.hidden && !volet.contains(e.target)) fermer();
+  });
+  voletFermer.addEventListener("click", () => fermer());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") return fermer();
+    if (e.key === "/" && !e.target.closest?.("input, textarea") && volet.hidden) { e.preventDefault(); champ.focus(); champ.select(); return; }
+    if (volet.hidden || !origine || e.target.closest?.("input")) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const liens = [...fiches].filter((f) => !f.hidden).map((f) => f.querySelector(".fiche-titre a"));
+    const i = liens.indexOf(origine);
+    const suivant = liens[i + (e.key === "ArrowRight" ? 1 : -1)];
+    if (!suivant) return;
+    e.preventDefault();
+    origine = suivant;
+    suivant.closest(".fiche").scrollIntoView({ block: "center", behavior: "smooth" });
+    ouvrir(suivant.href);
+  });
+  window.addEventListener("popstate", (e) => (e.state?.volet ? ouvrir(e.state.volet, false) : fermer(false)));
+
+  // Un signet visible au hasard.
+  document.getElementById("hasard").addEventListener("click", (e) => {
+    e.currentTarget.classList.remove("lance");
+    void e.currentTarget.offsetWidth;
+    e.currentTarget.classList.add("lance");
+    const v = [...fiches].filter((f) => !f.hidden);
+    const f = v[Math.floor(Math.random() * v.length)];
+    if (!f) return;
+    f.scrollIntoView({ block: "center" });
+    f.querySelector(".fiche-titre a")?.focus({ preventScroll: true });
+    // Le dossier tiré se signale une seconde, souris ou clavier.
+    for (const x of grille.querySelectorAll("[data-tire]")) x.removeAttribute("data-tire");
+    f.setAttribute("data-tire", "");
+    setTimeout(() => f.removeAttribute("data-tire"), 1400);
+  });
 
   function majVue(vue) {
     grille.dataset.vue = vue;
@@ -95,6 +256,7 @@
 
   const nbTags = etiqCount?.textContent ?? "";
   let catActif = "";
+  let anneeActive = "";
   const tagsActifs = new Set();
 
   const normaliser = (s) =>
@@ -116,18 +278,25 @@
         !catActif ||
         (catActif === "__sans" ? cats.length === 0 : cats.includes(catActif));
       const okTags = [...tagsActifs].every((t) => tags.includes(t));
+      const okAnnee = !anneeActive || f.dataset.annee === anneeActive;
       const okQ = q.every((mot) => texte.includes(mot));
-      f.hidden = !(okCat && okTags && okQ);
+      f.hidden = !(okCat && okTags && okQ && okAnnee);
       if (!f.hidden) {
+        f.style.setProperty("--i", Math.min(visibles, 12));
         visibles++;
         for (const t of tags) restants.set(t, (restants.get(t) ?? 0) + 1);
       }
     }
-    // Rétrécit le panneau : une étiquette sans résultat combiné est désactivée.
+    // Rétrécit le panneau : une étiquette sans résultat combiné est désactivée (et masquée en CSS).
     for (const b of boutonsTag) {
       const n = restants.get(b.dataset.tag) ?? 0;
       b.disabled = n === 0 && !tagsActifs.has(b.dataset.tag);
       compteurs.get(b.dataset.tag).textContent = n;
+    }
+    for (const d of document.querySelectorAll(".tags-rares")) {
+      const n = d.querySelectorAll("button:not(:disabled)").length;
+      d.querySelector("summary").textContent = `+${n}`;
+      d.hidden = n === 0;
     }
     statut.textContent =
       visibles === 0
@@ -136,6 +305,9 @@
           ? "1 signet"
           : `${visibles} signets`;
     vide.hidden = visibles !== 0;
+    grille.setAttribute("data-anime", "");
+    clearTimeout(appliquer.t);
+    appliquer.t = setTimeout(() => grille.removeAttribute("data-anime"), 700);
   }
 
   function majCats() {
@@ -149,6 +321,13 @@
   });
 
   champ.addEventListener("input", appliquer);
+
+  for (const b of boutonsAnnee)
+    b.addEventListener("click", () => {
+      anneeActive = b.dataset.annee === anneeActive ? "" : b.dataset.annee;
+      for (const x of boutonsAnnee) x.setAttribute("aria-pressed", String(x.dataset.annee === anneeActive));
+      appliquer();
+    });
 
   for (const b of boutonsCat)
     b.addEventListener("click", () => {
@@ -171,8 +350,10 @@
   reset.addEventListener("click", () => {
     champ.value = "";
     catActif = "";
+    anneeActive = "";
     tagsActifs.clear();
     majCats();
+    for (const b of boutonsAnnee) b.setAttribute("aria-pressed", "false");
     for (const b of boutonsTag) b.setAttribute("aria-pressed", "false");
     if (etiqCount) etiqCount.textContent = nbTags;
     appliquer();

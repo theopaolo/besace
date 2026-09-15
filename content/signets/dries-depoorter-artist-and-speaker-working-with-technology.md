@@ -1,5 +1,5 @@
 ---
-title: "Dries Depoorter – artist and speaker working with technology 🔥"
+title: "Dries Depoorter, artist working with technology"
 date: 2022-09-14
 extra:
   image: "/images/dries-depoorter-artist-and-speaker-working-with-technology.jpg"

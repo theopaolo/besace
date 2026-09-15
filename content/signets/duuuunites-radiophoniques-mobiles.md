@@ -1,5 +1,5 @@
 ---
-title: "*Duuu—Unités Radiophoniques Mobiles"
+title: "Duuu, unités radiophoniques mobiles"
 date: 2021-06-27
 extra:
   url: "https://duuuradio.fr/"

@@ -1,5 +1,5 @@
 ---
-title: "Carla 🌞 Bonnes adresses Lyon (@carlabmtt) • Threads, Say more"
+title: "Carla, bonnes adresses à Lyon"
 date: 2025-05-17
 extra:
   url: "https://www.threads.com/@carlabmtt"

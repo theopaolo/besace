@@ -6,38 +6,54 @@
 {% if page.extra.image %}{% set og = resize_image(path=page.extra.image, width=1200, height=630, op="fill", format="jpg", quality=80) %}<meta property="og:image" content="{{ og.url }}">{% endif %}
 {% endblock %}
 {% block content %}
-<div class="barre retour"><p class="container" data-width="content"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p></div>
+<p class="retour-lien"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p>
+{# Le contenu de #dossier est aussi chargé dans le volet de l'index (fetch), garder tout dedans. #}
 {% set labels = config.extra.categories %}
 {% set cats = page.taxonomies.category | default(value=[]) %}
 {% set tags = page.taxonomies.tags | default(value=[]) %}
 {% set cat_slug = cats | first %}
-<article class="dossier" data-categorie="{{ cats | join(sep=" ") }}">
-  {% if cat_slug %}<p class="fiche-onglet"><a href="{{ get_taxonomy_url(kind="category", name=cat_slug) }}">{{ labels[cat_slug] | default(value=cat_slug) }}</a></p>{% endif %}
-  <h1>{{ page.title }}</h1>
-  {% if page.extra.image %}{% set photo = resize_image(path=page.extra.image, width=480, height=480, op="fill", format="webp", quality=75) %}
-  <img class="dossier-photo" src="{{ photo.url }}" alt="" width="480" height="480">{% endif %}
-  <p class="page-url">{% set compact = false %}{% include "external-url.html" %}</p>
-  <div class="postit flow">
-    {{ page.content | safe }}
-    {% if tags %}<p class="fiche-meta small">{% for tag in tags %}<a class="tag" href="{{ get_taxonomy_url(kind="tags", name=tag) }}">{{ tag }}</a>{% endfor %}</p>{% endif %}
-  </div>
-</article>
-
-{# Signets voisins : au moins une étiquette en commun. #}
-{% set_global voisins = [] %}
-{% set section = get_section(path="signets/_index.md") %}
-{% for p in section.pages %}
-  {% if p.permalink != page.permalink %}
-    {% for t in p.taxonomies.tags | default(value=[]) %}
-      {% if t in tags %}{% set_global voisins = [...voisins, p] %}{% break %}{% endif %}
-    {% endfor %}
+{% set url = page.extra.url | default(value="") | trim %}
+{% set domaine = url | replace(from="https://", to="") | replace(from="http://", to="") | split(pat="/") | first %}
+<article class="dossier" id="dossier" data-categorie="{{ cats | join(sep=" ") }}">
+  {% set titre = page.title %}{% if titre | length > 12 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
+  <h1 class="dossier-titre">{{ titre }}</h1>
+  {% if page.extra.image %}{% set photo = resize_image(path=page.extra.image, width=720, height=720, op="fill", format="webp", quality=75) %}
+  <a class="dossier-photo" href="{{ url }}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="{{ photo.url }}" alt="" width="720" height="720" loading="lazy"></a>{% endif %}
+  <dl class="infos">
+    {% if page.year %}<dt>Année</dt><dd>{{ page.year }}</dd>{% endif %}
+    <dt>Source</dt><dd>{% if domaine %}<a class="lien-source" href="{{ url }}" target="_blank" rel="noopener">{{ domaine }}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>{% else %}<span class="muted">Lien indisponible</span>{% endif %}</dd>
+    {% if cat_slug %}<dt>Dossier</dt><dd><a href="{{ get_taxonomy_url(kind="category", name=cat_slug) }}">{{ labels[cat_slug] | default(value=cat_slug) }}</a></dd>{% endif %}
+    {% if tags %}<dt>Étiquettes</dt><dd>{% for tag in tags %}<a class="tag" href="{{ get_taxonomy_url(kind="tags", name=tag) }}">{{ tag }}</a>{% endfor %}</dd>{% endif %}
+  </dl>
+  {% if page.content | striptags | trim %}
+  <h2 class="infos-titre">Description</h2>
+  <div class="dossier-texte flow">{{ page.content | safe }}</div>
   {% endif %}
-{% endfor %}
-{% if voisins %}
-<section class="voisins">
-  <h2>Voir aussi</h2>
-  {% set heading_level = 3 %}
-  <ul class="grille" role="list">{% for page in voisins %}{% if loop.index <= 6 %}{% include "signet.html" %}{% endif %}{% endfor %}</ul>
-</section>
-{% endif %}
+
+  {# Signets voisins : ceux qui partagent deux étiquettes d'abord, puis une seule. #}
+  {% set_global voisins = [] %}
+  {% set section = get_section(path="signets/_index.md") %}
+  {% for seuil in [2, 1] %}
+    {% for p in section.pages %}
+      {% if p.permalink != page.permalink and p not in voisins %}
+        {% set_global communs = 0 %}
+        {% for t in p.taxonomies.tags | default(value=[]) %}{% if t in tags %}{% set_global communs = communs + 1 %}{% endif %}{% endfor %}
+        {% if communs >= seuil %}{% set_global voisins = [...voisins, p] %}{% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  {% if voisins %}
+  <h2 class="infos-titre">Signets voisins</h2>
+  <ul class="voisins" role="list">
+    {% for v in voisins %}{% if loop.index <= 8 %}
+    {% set c = v.taxonomies.category | default(value=[]) | first | default(value="") %}
+    {% set vu = v.extra.url | default(value="") | replace(from="https://", to="") | replace(from="http://", to="") | split(pat="/") | first %}
+    <li class="mini" data-categorie="{{ c }}">
+      <span class="mini-onglet"><span>{{ vu | default(value=labels[c] | default(value=c)) }}</span></span>
+      <a href="{{ v.permalink }}">{{ v.title }}</a>
+    </li>
+    {% endif %}{% endfor %}
+  </ul>
+  {% endif %}
+</article>
 {% endblock %}

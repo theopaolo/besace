@@ -14,11 +14,16 @@
 {% set recherche = page.title ~ " " ~ url_brut ~ " " ~ texte_brut ~ " " ~ tags_bruts %}
 {# Premier paragraphe en tête, le reste sur le post-it. #}
 {% set paras = page.content | split(pat="</p>") %}
-<li class="fiche"
+{# Titres en capitales ramenés en bas de casse, titres longs marqués pour être réduits et coupés. #}
+{% set titre = page.title %}
+{% if titre | length > 12 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
+{% set premier = paras | first | striptags | trim %}
+<li class="fiche"{% if titre | length > 60 %} data-long{% endif %}
   data-categorie="{{ cats | join(sep=" ") }}"
   data-tags="{{ tags_bruts }}"
+  data-annee="{{ page.year | default(value="") }}"
   data-recherche="{{ recherche | lower | escape }}">
-  <p class="fiche-onglet">
+  <p class="fiche-onglet" data-annee="{{ page.year | default(value="") }}">
     {% if domaine %}<a href="{{ page.extra.url }}" target="_blank" rel="noopener">{{ domaine }}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>{% else %}<span class="muted">Lien indisponible</span>{% endif %}
     {% if cat_slug %}<span class="visually-hidden">, catégorie {{ labels[cat_slug] | default(value=cat_slug) }}</span>{% endif %}
   </p>
@@ -28,9 +33,9 @@
       <img src="{{ vignette.url }}" alt="" width="256" height="256" loading="lazy">
     </a>{% endif %}
   <h{{ heading_level | default(value=3) }} class="fiche-titre">
-    <a href="{{ page.permalink }}">{{ page.title }}</a>
+    <a href="{{ page.permalink }}">{{ titre }}</a>
   </h{{ heading_level | default(value=3) }}>
-  <div class="fiche-texte">{{ paras | first | safe }}</p></div>
+  {% if premier and premier | lower != page.title | lower %}<div class="fiche-texte">{{ paras | first | safe }}</p></div>{% endif %}
   {% if paras | length > 2 %}<div class="postit">
     {% for p in paras %}{% if not loop.first and p | trim %}{{ p | safe }}</p>{% endif %}{% endfor %}
   </div>{% endif %}

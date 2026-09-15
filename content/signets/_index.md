@@ -1,5 +1,5 @@
 +++
 title = "Tous les signets"
-sort_by = "title"
+sort_by = "date"
 transparent = true
 +++

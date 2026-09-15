@@ -2,8 +2,12 @@
 {% block title %}{{ term.name }} · {{ config.title }}{% endblock %}
 {% block content %}
 {% set labels = config.extra.categories %}
-<h1>{% if taxonomy.name == "category" %}{{ labels[term.slug] | default(value=term.name) }}{% else %}#{{ term.name }}{% endif %} <span class="count">{{ term.pages | length }}</span></h1>
-<div class="barre retour"><p class="container" data-width="content"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p></div>
+{% set est_cat = taxonomy.name == "category" %}
+<header class="entete">
+  <h1 class="entete-titre">{% if est_cat %}{{ labels[term.slug] | default(value=term.name) }}{% else %}#{{ term.name }}{% endif %}</h1>
+  <p class="entete-sur small">{{ term.pages | length }} signet{{ term.pages | length | pluralize }} dans {% if est_cat %}ce dossier{% else %}cette étiquette{% endif %}</p>
+  <p class="retour-lien"><a href="{{ get_url(path="/") }}">← Tous les signets</a></p>
+</header>
 {% set heading_level = 2 %}
 <ul class="grille" role="list">{% for page in term.pages %}{% include "signet.html" %}{% endfor %}</ul>
 {% endblock %}

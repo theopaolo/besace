@@ -19,17 +19,17 @@
     --line: light-dark(#cfd0dc, #2c2d30);
     --accent: light-dark(#4d6531, #a7c78a);
     --accent-ink: light-dark(#f5f2ea, #17181a);
-    --lavender: light-dark(#e6e0f4, #2b2740);
+    --lavender: light-dark(#e6e0f4, #37324f);
     /* Papiers teintés par catégorie, comme des fiches cartonnées. */
-    --paper: light-dark(#f2f2f6, #222325);
+    --paper: light-dark(#f2f2f6, #2a2b2f);
     --postit: light-dark(#fff4a8, #c9b84a);
     /* Verre dépoli : fond translucide, flou, liseré clair sur le bord. */
     --verre: light-dark(rgb(240 240 247 / 0.55), rgb(23 24 26 / 0.55));
     --verre-bord: light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.1));
     --verre-filtre: blur(18px) saturate(1.5);
-    --paper-design: light-dark(#e6e0f4, #2b2740);
-    --paper-dev: light-dark(#dfe8d0, #253021);
-    --paper-ressources: light-dark(#dfe6ee, #26303a);
+    --paper-design: light-dark(#e6e0f4, #37324f);
+    --paper-dev: light-dark(#dfe8d0, #2e3b28);
+    --paper-ressources: light-dark(#dfe6ee, #2b3a49);
     --tab-h: 1.75rem;
     --content: 72rem;
     --measure: 62ch;
@@ -143,15 +143,15 @@
   }
   .contribuer {
     flex: none;
-    padding: var(--space-2xs) var(--space-s);
-    background: var(--accent);
-    color: var(--accent-ink);
+    padding: var(--space-3xs) 0;
+    border-block-end: 2px solid var(--accent);
+    color: var(--fg);
     font-size: var(--step-0);
     font-weight: 600;
+    transition: color 0.15s;
   }
   .contribuer:hover {
-    color: var(--accent-ink);
-    background: color-mix(in oklab, var(--accent) 85%, var(--fg));
+    color: var(--accent);
   }
   .recherche-champ {
     flex: 1 1 14rem;
@@ -202,6 +202,156 @@
     display: flex;
     gap: var(--space-xs);
   }
+  /* Frise des années : verticale sur le bord droit, ligne fine, année active en relief. */
+  .frise {
+    margin: 0;
+    position: fixed;
+    inset-inline-end: var(--space-2xs);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-3xs);
+    padding-inline-end: var(--space-xs);
+    border-inline-end: 2px solid var(--line);
+  }
+  body:has(#filtres-tags:not([hidden])) .frise {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+  .frise button {
+    position: relative;
+    flex: none;
+    white-space: nowrap;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 0 var(--space-3xs);
+    font: inherit;
+    font-size: var(--step--2, 0.75rem);
+    font-weight: 300;
+    line-height: 1.7;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .frise button[aria-pressed="true"] {
+    font-weight: 500;
+  }
+  .frise button::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: calc(-1 * var(--space-xs) - 4px);
+    inset-block-start: 50%;
+    inline-size: 6px;
+    block-size: 6px;
+    translate: 0 -50%;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.15s, scale 0.15s;
+  }
+  .frise button:hover,
+  .frise button[aria-pressed="true"] {
+    color: var(--fg);
+  }
+  .frise button[aria-pressed="true"]::after {
+    background: var(--accent);
+    scale: 1.5;
+  }
+  /* Outils épinglés en bas à droite, empilés sur le verre. */
+  .outils {
+    margin: 0;
+    position: fixed;
+    inset-inline-end: var(--space-s);
+    inset-block-end: calc(var(--barre-h, 4rem) + var(--space-s));
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--verre);
+    -webkit-backdrop-filter: var(--verre-filtre);
+    backdrop-filter: var(--verre-filtre);
+    box-shadow: 0 1px 0 var(--verre-bord) inset, 0 4px 12px rgb(0 0 0 / 0.15);
+  }
+  .outils button {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: var(--step-2);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .outils button:hover {
+    color: var(--accent);
+  }
+  .outils button:disabled {
+    color: var(--muted);
+    opacity: 0.4;
+    cursor: default;
+  }
+  /* Le dé : frémit au survol, tourne au lancer. */
+  .de svg {
+    transition: rotate 0.2s ease-out;
+  }
+  .de:hover svg {
+    rotate: -12deg;
+  }
+  .de.lance svg {
+    animation: lancer 0.5s ease-out;
+  }
+  @keyframes lancer {
+    from { rotate: 0deg; scale: 1; }
+    50% { scale: 1.3; }
+    to { rotate: 360deg; scale: 1; }
+  }
+  /* Noir et blanc : un carré moitié noir moitié blanc, bordure, qui s'inverse quand actif. */
+  .nb span {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    border: 2px solid currentColor;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+    transition: rotate 0.25s ease-out;
+  }
+  .nb[aria-pressed="true"] span {
+    rotate: 180deg;
+  }
+  @media (width < 60rem) {
+    .frise {
+      translate: 0;
+      inset-block-start: auto;
+      inset-block-end: calc(var(--barre-h, 4rem) + var(--space-s));
+      inset-inline-end: auto;
+      inset-inline-start: var(--gutter);
+      max-inline-size: calc(100% - var(--gutter) * 2 - 10.5rem);
+      flex-direction: row;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: var(--space-xs);
+      border: 0;
+      padding: var(--space-3xs) var(--space-xs);
+      background: var(--verre);
+      -webkit-backdrop-filter: var(--verre-filtre);
+      backdrop-filter: var(--verre-filtre);
+    }
+    .outils {
+      flex-direction: row;
+      inset-inline-end: var(--gutter);
+    }
+    .outils button {
+      inline-size: 2.4rem;
+      block-size: 2.4rem;
+    }
+    .frise button::after {
+      display: none;
+    }
+  }
   .vues button {
     border: 0;
     border-block-end: 2px solid transparent;
@@ -244,9 +394,12 @@
     cursor: pointer;
   }
   .etiquettes-toggle::before {
-    content: "▲";
-    font-size: 0.6em;
-    transition: transform 0.15s ease-out;
+    content: "";
+    inline-size: 0.7em;
+    block-size: 0.7em;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M2 8l4-4 4 4%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .etiquettes-toggle[aria-expanded="true"] {
     color: var(--fg);
@@ -275,8 +428,9 @@
     max-block-size: 40vh;
     overflow-y: auto;
   }
+  /* --barre-h : hauteur réelle de la barre, mesurée par l'index (ResizeObserver). */
   body:has(.barre) {
-    padding-block-end: var(--space-2xl);
+    padding-block-end: calc(var(--barre-h, 4rem) + var(--space-l));
   }
   .filtres-cats button {
     border: 0;
@@ -305,18 +459,17 @@
     font: inherit;
     font-size: var(--step-0);
     cursor: pointer;
+    transition: background 0.15s, color 0.15s;
   }
   .filtres-tags button .n {
     color: var(--muted);
     font-size: var(--step--1);
   }
   .filtres-tags button:disabled {
-    opacity: 0.35;
-    cursor: default;
+    display: none;
   }
-  .filtres-tags button:disabled:hover {
-    color: var(--fg);
-    background: var(--lavender);
+  .tags-groupe:not(:has(button:not(:disabled))) {
+    display: none;
   }
   .tags-groupe {
     display: flex;
@@ -354,101 +507,206 @@
     opacity: 0.7;
   }
   .filtres-tags button:hover,
-  .tag:hover {
+  .tag:hover,
+  .fiche .tag:hover,
+  .postit .tag:hover {
     color: var(--accent-ink);
     background: var(--accent);
   }
 
+  /* Grille pleine largeur, sortie du conteneur. --zoom réduit ou agrandit les fiches
+     (la propriété zoom multiplie toutes les longueurs, colonnes comprises). */
   .grille {
+    --zoom: 1;
     list-style: none;
     padding: 0;
-    margin: 0;
-    columns: 20rem;
+    margin-block: 0;
+    margin-inline: calc(50% - 50vw + var(--gutter));
+    columns: calc(20rem * var(--zoom));
     column-gap: var(--space-m);
+  }
+  /* Noir et blanc : papiers blancs, encre noire, pas de gris. */
+  :root[data-nb] {
+    --bg: light-dark(#fff, #000);
+    --fg: light-dark(#000, #fff);
+    --muted: var(--fg);
+    --line: var(--fg);
+    --accent: var(--fg);
+    --accent-ink: var(--bg);
+    --lavender: var(--bg);
+    --paper: var(--bg);
+    --paper-design: var(--bg);
+    --paper-dev: var(--bg);
+    --paper-ressources: var(--bg);
+    --postit: var(--bg);
+    --verre: var(--bg);
+    --verre-bord: var(--fg);
+    --verre-filtre: none;
+  }
+  :root[data-nb] .fond {
+    display: none;
+  }
+  :root[data-nb] .fiche::after,
+  :root[data-nb] .dossier,
+  :root[data-nb] .postit,
+  :root[data-nb] .fiche-onglet,
+  :root[data-nb] .filtres-tags button,
+  :root[data-nb] .tag {
+    outline: 1px solid var(--fg);
+    outline-offset: -1px;
+    box-shadow: none;
+  }
+  :root[data-nb] .postit {
+    color: var(--fg);
+    --accent: var(--fg);
+  }
+  :root[data-nb] .outils {
+    outline: 1px solid var(--fg);
+  }
+  :root[data-nb] .recherche-champ input {
+    outline: 1px solid var(--fg);
+  }
+  :root[data-nb] .fiche-image img {
+    filter: grayscale(1) contrast(1.2);
+  }
+  /* Sur l'index, la frise des années occupe le bord droit. */
+  @media (width >= 60rem) {
+    body:has(.frise) .grille {
+      margin-inline-end: calc(50% - 50vw + var(--gutter) + 4rem);
+    }
+  }
+  /* Après un filtre, les fiches se posent : léger décalage, douze premières échelonnées. */
+  @keyframes poser {
+    from { opacity: 0; translate: 0 6px; }
+  }
+  .grille[data-anime] .fiche:not([hidden]) {
+    animation: poser 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 22ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .grille[data-anime] .fiche:not([hidden]) {
+      animation: none;
+    }
+  }
+  /* Le dossier tiré au dé : liseré olive qui s'efface. */
+  @keyframes tire {
+    from { outline-color: var(--accent); }
+    to { outline-color: transparent; }
+  }
+  .fiche[data-tire] {
+    outline: 3px solid transparent;
+    outline-offset: 4px;
+    animation: tire 1.4s ease-out both;
+  }
+  .grille[data-dense] .fiche-texte,
+  .grille[data-dense] .postit,
+  .grille[data-dense] .fiche-image {
+    display: none;
   }
   .grille > .fiche {
     break-inside: avoid;
     margin-block-end: var(--space-m);
   }
-  /* Vue liste : une ligne par signet, onglet et photo repliés, post-it à plat. */
+  /* Vue liste : une ligne par signet, titre puis domaine et année en sourdine, étiquettes à droite. */
   .grille[data-vue="liste"] {
     columns: auto;
-    border: 1px solid var(--line);
+    border-block-start: 1px solid var(--line);
   }
   .grille[data-vue="liste"] > .fiche {
     display: grid;
-    grid-template-columns: minmax(10rem, 1fr) 2fr;
-    grid-template-areas: "titre texte" "onglet argument" "onglet tags";
-    gap: var(--space-3xs) var(--space-m);
+    grid-template-columns: minmax(12rem, 2fr) minmax(0, 3fr) auto;
+    grid-template-areas: "titre texte tags" "onglet texte tags";
     align-items: baseline;
+    column-gap: var(--space-m);
+    row-gap: 0;
     margin: 0;
-    padding: var(--space-xs) var(--space-m);
+    padding: var(--space-2xs) var(--space-xs);
     background: transparent;
-    filter: none;
-    border-block-start: 0;
+    zoom: 1;
     border-block-end: 1px solid var(--line);
+    transition: background 0.15s;
   }
-  .grille[data-vue="liste"] > .fiche:last-child {
-    border-block-end: 0;
+  .grille[data-vue="liste"] > .fiche:hover {
+    background: color-mix(in oklab, var(--papier) 60%, transparent);
   }
-  .grille[data-vue="liste"] .fiche-image {
+  .grille[data-vue="liste"] > .fiche::after,
+  .grille[data-vue="liste"] .fiche-image,
+  .grille[data-vue="liste"] .postit {
     display: none;
   }
   .grille[data-vue="liste"] .fiche-onglet {
     grid-area: onglet;
-    align-self: start;
     position: static;
     block-size: auto;
     max-inline-size: none;
     padding: 0;
     background: none;
     clip-path: none;
+    box-shadow: none;
     font-weight: 400;
+    font-size: var(--step--1, 0.75rem);
     color: var(--muted);
+  }
+  .grille[data-vue="liste"] .fiche-onglet::after {
+    content: " · " attr(data-annee);
   }
   .grille[data-vue="liste"] .fiche-titre {
     grid-area: titre;
     font-size: var(--step-1);
+    font-weight: 600;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .grille[data-vue="liste"] .fiche-texte {
     grid-area: texte;
     max-width: none;
-  }
-  .grille[data-vue="liste"] .postit {
-    grid-area: argument;
-    background: none;
-    color: inherit;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-    transform: none;
+    -webkit-line-clamp: 1;
     font-size: var(--step-0);
   }
   .grille[data-vue="liste"] .fiche-meta {
     grid-area: tags;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
   .grille[data-vue="liste"] .tag {
     font-size: 0.8rem;
     padding-block: 0.1em;
+    background: var(--lavender);
   }
   @media (max-width: 45rem) {
     .grille[data-vue="liste"] > .fiche {
       grid-template-columns: 1fr;
-      grid-template-areas: "titre" "texte" "argument" "tags" "onglet";
+      grid-template-areas: "titre" "onglet" "texte" "tags";
+    }
+    .grille[data-vue="liste"] .fiche-meta {
+      justify-content: flex-start;
+      flex-wrap: wrap;
     }
   }
   /* Dossier en deux pièces : onglet posé au-dessus du corps, papier teinté par catégorie, ombre portée commune. */
   .fiche {
     --papier: var(--paper);
+    zoom: var(--zoom, 1);
     position: relative;
-    background-color: var(--papier);
-    background-clip: padding-box;
-    border-block-start: var(--tab-h) solid transparent;
-    padding: var(--space-s) var(--space-m) var(--space-m);
+    /* L'onglet occupe le padding haut : il reste dans la boîte, donc visible sous contain: paint.
+       Le papier commence sous l'onglet, l'ombre aussi (::after). */
+    background: linear-gradient(transparent var(--tab-h), var(--papier) var(--tab-h));
+    isolation: isolate;
+    padding: calc(var(--tab-h) + var(--space-s)) var(--space-m) var(--space-m);
     display: flow-root;
     min-inline-size: 0;
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12))
-      drop-shadow(0 6px 12px rgb(0 0 0 / 0.1));
+  }
+  .fiche::after {
+    content: "";
+    position: absolute;
+    inset: var(--tab-h) 0 0 0;
+    z-index: -1;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 6px 12px rgb(0 0 0 / 0.1);
+  }
+  .fiche-onglet {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   }
   .fiche[data-categorie~="design"],
   .dossier[data-categorie~="design"] {
@@ -471,7 +729,7 @@
   /* L'onglet : une languette légèrement plus foncée que le corps, coin droit biseauté. */
   .fiche-onglet {
     position: absolute;
-    inset-block-end: 100%;
+    inset-block-start: 0;
     inset-inline-start: 0;
     max-inline-size: calc(100% - 1rem);
     block-size: var(--tab-h);
@@ -487,7 +745,29 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-left: .5rem;
   }
+  /* Icône de catégorie sur l'onglet : lisible sans la couleur. Masque SVG teinté par currentColor. */
+  .fiche-onglet::before,
+  .mini-onglet::before {
+    content: "";
+    display: var(--icone-affichee, none);
+    flex: none;
+    inline-size: 0.75em;
+    block-size: 0.75em;
+    background: currentColor;
+    mask: var(--icone) center / contain no-repeat;
+    color: var(--muted);
+  }
+  .fiche-onglet::before {
+    margin-inline-end: var(--space-2xs);
+  }
+  [data-categorie~="design"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M6 .8 11.2 6 6 11.2.8 6z%22/%3E%3C/svg%3E"); --icone-affichee: block; }
+  [data-categorie~="developpement"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M4.5 1.2C3 1.2 3 2.2 3 3.2v1.3c0 .9-.4 1.5-1.6 1.5C2.6 6 3 6.6 3 7.5v1.3c0 1 0 2 1.5 2M7.5 1.2c1.5 0 1.5 1 1.5 2v1.3c0 .9.4 1.5 1.6 1.5C9.4 6 9 6.6 9 7.5v1.3c0 1 0 2-1.5 2%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.4%22 stroke-linecap=%22round%22/%3E%3C/svg%3E"); --icone-affichee: block; }
+  [data-categorie~="son"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Ccircle cx=%223.4%22 cy=%229%22 r=%222.1%22/%3E%3Ccircle cx=%228.6%22 cy=%228%22 r=%222.1%22/%3E%3Cpath d=%22M5.5 9V2.4l5.2-1.1V8%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.4%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); --icone-affichee: block; }
+  [data-categorie~="jeu"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M4.3.8h3.4v3.5h3.5v3.4H7.7v3.5H4.3V7.7H.8V4.3h3.5z%22/%3E%3C/svg%3E"); --icone-affichee: block; }
+  [data-categorie~="societe"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Ccircle cx=%226%22 cy=%223.2%22 r=%222.2%22/%3E%3Ccircle cx=%222.6%22 cy=%229%22 r=%222.2%22/%3E%3Ccircle cx=%229.4%22 cy=%229%22 r=%222.2%22/%3E%3C/svg%3E"); --icone-affichee: block; }
+  [data-categorie~="ressources"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M1.5 2.5h9M1.5 6h9M1.5 9.5h6%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22/%3E%3C/svg%3E"); --icone-affichee: block; }
   .fiche-onglet a {
     text-decoration: underline;
     text-decoration-color: var(--accent);
@@ -500,6 +780,16 @@
   }
   .fiche-onglet a:hover {
     color: var(--accent);
+  }
+  .fiche-onglet a,
+  .fiche-titre a,
+  .filtres-cats button,
+  .vues button,
+  .frise button,
+  .outils button,
+  .retour-lien a,
+  .mini a {
+    transition: color 0.15s;
   }
   .page-url a {
     color: var(--muted);
@@ -528,10 +818,25 @@
   }
   .fiche-titre {
     font-size: var(--step-2);
-    font-weight: 700;
+    font-weight: 650;
     margin: 0;
     text-wrap: balance;
     line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  /* Titre long : plus petit et coupé à quatre lignes. */
+  .fiche[data-long] .fiche-titre {
+    font-size: var(--step-1);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .fiche-texte {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
   }
   .fiche-titre a {
     text-decoration: none;
@@ -585,10 +890,14 @@
     background: color-mix(in oklab, currentColor 9%, transparent);
   }
   .vide {
-    border: 1px dashed var(--line);
-    padding: var(--space-l);
+    max-inline-size: 24rem;
+    margin: var(--space-xl) auto;
+    padding: var(--space-l) var(--space-m);
+    background: var(--paper);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 6px 12px rgb(0 0 0 / 0.1);
     text-align: center;
     color: var(--muted);
+    rotate: -0.6deg;
   }
   .vide button {
     color: var(--fg);
@@ -610,82 +919,269 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+  html {
+    caret-color: var(--accent);
+    accent-color: var(--accent);
+    scrollbar-color: color-mix(in oklab, var(--fg) 25%, transparent) transparent;
+  }
+  .volet,
+  .filtres-tags {
+    scrollbar-width: thin;
+  }
+  .statut,
+  .count,
+  .n,
+  .frise,
+  .infos dd {
+    font-variant-numeric: tabular-nums;
+  }
   .page-url {
     word-break: break-all;
     font-size: var(--step-0);
     color: var(--muted);
   }
-  /* Retour dans une barre fixée en bas, la même que sur l'index. */
-  .retour p {
-    margin-block: 0;
-    padding-block: var(--space-2xs);
+  /* En-tête d'une étiquette ou d'un dossier : surtitre, grand titre léger, retour discret. */
+  .entete {
+    margin-block: var(--space-l) var(--space-xl);
   }
-  .retour a {
-    display: inline-block;
-    padding: var(--space-3xs) var(--space-s);
-    background: var(--fg);
-    color: var(--bg);
+  .entete-sur {
+    margin: var(--space-2xs) 0 0;
+    color: var(--muted);
+  }
+  .entete-titre {
+    margin: 0;
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1.1;
+  }
+  .retour-lien {
+    margin: var(--space-xs) 0 0;
     font-size: var(--step-0);
-    font-weight: 600;
+  }
+  .retour-lien a {
+    color: var(--muted);
     text-decoration: none;
   }
-  .retour a:hover {
-    background: var(--accent);
-    color: var(--accent-ink);
+  .retour-lien a:hover {
+    color: var(--accent);
+    text-decoration: underline;
   }
+  main > .retour-lien:first-child {
+    margin-block: var(--space-m) var(--space-s);
+  }
+  /* La fiche : une feuille de papier, titre léger et grand, informations en deux colonnes. */
   .dossier {
     --papier: var(--paper);
     position: relative;
-    max-inline-size: 48rem;
+    max-inline-size: 44rem;
     margin-inline: auto;
-    margin-block-start: var(--tab-h);
     background: var(--papier);
-    padding: var(--space-m) var(--space-l) var(--space-l);
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.12))
-      drop-shadow(0 8px 16px rgb(0 0 0 / 0.12));
+    padding: var(--space-xl) var(--space-l) var(--space-xl);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 8px 24px rgb(0 0 0 / 0.14);
   }
-  .dossier .fiche-onglet a {
-    text-decoration: none;
+  .dossier-titre {
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1.1;
+    margin: 0 0 var(--space-l);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
   }
-  .dossier h1 {
+  .infos {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--space-2xs) var(--space-m);
     margin: 0;
+    font-size: var(--step-1);
   }
-  /* Photo agrafée dans le coin du dossier, comme un tirage papier. */
+  .infos dt,
+  .infos-titre {
+    font-size: var(--step--1);
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .infos dt {
+    padding-block-start: 0.35em;
+  }
+  .infos dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    align-items: baseline;
+  }
+  .infos dd a:not(.tag) {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+  .lien-source::after {
+    content: " ↗";
+    color: var(--accent);
+  }
+  .infos-titre {
+    margin: var(--space-xl) 0 var(--space-xs);
+  }
+  .dossier-texte {
+    font-size: var(--step-1);
+    max-width: var(--measure);
+  }
+  .dossier-texte > * {
+    margin-block: 0 var(--space-s);
+  }
+  /* Photo agrafée en haut à droite, comme un tirage papier. */
   .dossier-photo {
     float: inline-end;
-    inline-size: clamp(6rem, 24%, 9rem);
-    block-size: auto;
-    aspect-ratio: 1;
-    object-fit: cover;
+    inline-size: clamp(6rem, 28%, 11rem);
     margin: 0 0 var(--space-s) var(--space-m);
     padding: 0.4rem 0.4rem 1.4rem;
     background: #fff;
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
     transform: rotate(2.5deg);
   }
-  .dossier:has(.dossier-photo) .postit {
-    margin-inline-end: clamp(8rem, 28%, 11rem);
+  .dossier-photo img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  /* Signets voisins : mini-dossiers, onglet avec glyphe et domaine, papier de la catégorie. */
+  .voisins {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--space-m) var(--space-s);
+  }
+  .mini {
+    --papier: var(--paper);
+    position: relative;
+    padding: calc(var(--tab-h) * 0.85 + var(--space-2xs)) var(--space-s) var(--space-s);
+    background: linear-gradient(transparent calc(var(--tab-h) * 0.85), var(--papier) calc(var(--tab-h) * 0.85));
+    isolation: isolate;
+    transition: translate 0.2s ease-out;
+  }
+  .mini::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--tab-h) * 0.85) 0 0 0;
+    z-index: -1;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 10px rgb(0 0 0 / 0.1);
+  }
+  .mini:hover {
+    translate: 0 -2px;
+  }
+  .mini-onglet {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    max-inline-size: calc(100% - 1rem);
+    block-size: calc(var(--tab-h) * 0.85);
+    padding-inline: var(--space-s) calc(var(--space-s) + 0.5rem);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    background: color-mix(in oklab, var(--papier) 90%, var(--fg));
+    clip-path: polygon(0 0, calc(100% - 0.8rem) 0, 100% 100%, 0 100%);
+    font-size: var(--step--1);
+    color: color-mix(in oklab, var(--fg) 82%, var(--papier));
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .mini-onglet > span {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mini a {
+    display: block;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    text-wrap: balance;
+  }
+  .mini a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .mini:hover a {
+    color: var(--accent);
+  }
+  .mini[data-categorie~="design"] { --papier: var(--paper-design); }
+  .mini[data-categorie~="developpement"] { --papier: var(--paper-dev); }
+  .mini[data-categorie~="ressources"] { --papier: var(--paper-ressources); }
+  /* Le volet : la feuille entre par la droite, légèrement tournée, puis se pose. */
+  .volet {
+    margin: 0;
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: 4;
+    inline-size: min(100%, 46rem);
+    overflow-y: auto;
+    padding: var(--space-s) var(--space-s) calc(var(--space-2xl) + var(--space-s));
+    translate: 100% 0;
+    transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .volet.ouvert {
+    translate: 0 0;
+  }
+  .volet .dossier {
+    min-block-size: calc(100dvh - var(--space-s) * 2);
+    max-inline-size: none;
+    rotate: 1.2deg;
+    transition: rotate 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+  }
+  .volet.ouvert .dossier {
+    rotate: 0deg;
+  }
+  .volet-fermer {
+    position: sticky;
+    inset-block-start: var(--space-s);
+    float: inline-end;
+    margin: var(--space-s);
+    z-index: 1;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border: 0;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 0;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .volet-fermer::before {
+    content: "";
+    display: block;
+    inline-size: 1rem;
+    block-size: 1rem;
+    margin: auto;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M2.5 2.5l7 7M9.5 2.5l-7 7%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.5%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  .volet-fermer:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .volet, .volet .dossier {
+      transition: none;
+    }
   }
   @media (max-width: 45rem) {
     .dossier {
       padding-inline: var(--space-m);
     }
-    .dossier:has(.dossier-photo) .postit {
-      margin-inline-end: 0;
-      clear: both;
+    .infos {
+      grid-template-columns: 1fr;
+      gap: var(--space-3xs);
     }
-  }
-  .dossier .postit {
-    max-width: var(--measure);
-    margin-block-start: var(--space-m);
-    transform: rotate(-0.4deg);
-    clear: none;
-  }
-  .voisins {
-    margin-block-start: var(--space-xl);
-  }
-  .voisins h2 {
-    margin-block-end: var(--space-s);
+    .infos dt {
+      padding-block-start: var(--space-xs);
+    }
   }
   .site-footer {
     margin-block-start: var(--space-2xl);
@@ -693,17 +1189,29 @@
   .site-footer p {
     max-width: var(--measure);
   }
-  @media (max-width: 35rem) {
+  @media (max-width: 45rem) {
+    .grille {
+      columns: 1;
+    }
     .barre .recherche-champ {
       order: 1;
       flex-basis: 100%;
       max-inline-size: none;
     }
+    .filtres-cats {
+      flex: 1 1 100%;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      mask: linear-gradient(90deg, #000 calc(100% - 2rem), transparent);
+    }
+    .filtres-cats button {
+      white-space: nowrap;
+    }
     .statut {
       margin-inline-start: auto;
-    }
-    body:has(.barre) {
-      padding-block-end: 9rem;
     }
   }
 }

@@ -1,5 +1,5 @@
 ---
-title: "♀ LIBRE FONTS BY WOMXN"
+title: "Libre fonts by womxn"
 date: 2018-12-28
 extra:
   image: "/images/libre-fonts-by-womxn.png"
