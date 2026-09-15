@@ -1,14 +1,11 @@
 ---
 title: Robin Moretti
 extra:
-  url: https://robinmoretti.eu/about/
+  url: https://robinmoretti.eu/
 taxonomies:
   tags:
     - Artiste
     - Développeur
 ---
-Robin Moretti est :   
-- Artiste créateur de jeux depuis 2016  
-- Enseignant à l’ESAD d’Orléans depuis 2022  
-- Créateur du Pang Pang Club en 2016
 
+Robin Moretti est artiste créateur de jeux, enseignant à l’ESAD d’Orléans er créateur du Pang Pang Club
