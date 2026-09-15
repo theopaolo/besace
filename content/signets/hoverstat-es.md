@@ -1,5 +1,5 @@
 ---
-title: "HOVERSTAT.ES"
+title: "Hoverstates"
 date: 2026-09-14
 extra:
   url: "https://www.hoverstat.es"

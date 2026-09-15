@@ -2,7 +2,6 @@
 title: "Studio Almond"
 date: 2020-12-15
 extra:
-  image: "/images/studio-almond.png"
   url: "https://almond.studio/"
 taxonomies:
   category: [design]

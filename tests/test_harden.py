@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix="glane-harden-", dir="/tmp") as director
     populated = build()
     assert 'id="filtres-tags"' in populated
     assert '<h2 class="fiche-titre' in populated
-    assert '<p class="fiche-onglet">' in populated
+    assert '<p class="fiche-onglet"' in populated
     assert "pastille" not in populated
     assert 'href="https://app.pagescms.org"' in populated
     assert "Sans catégorie" in populated

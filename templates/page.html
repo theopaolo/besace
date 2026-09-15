@@ -13,15 +13,17 @@
 {% set tags = page.taxonomies.tags | default(value=[]) %}
 {% set cat_slug = cats | first %}
 {% set url = page.extra.url | default(value="") | trim %}
+{% set normalized = url | lower %}
+{% if not (normalized is starting_with(pat="https://") or normalized is starting_with(pat="http://")) %}{% set url = "" %}{% endif %}
 {% set domaine = url | replace(from="https://", to="") | replace(from="http://", to="") | split(pat="/") | first %}
 <article class="dossier" id="dossier" data-categorie="{{ cats | join(sep=" ") }}">
-  {% set titre = page.title %}{% if titre | length > 12 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
+  {% set titre = page.title %}{% if titre | length > 3 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
   <h1 class="dossier-titre">{{ titre }}</h1>
-  {% if page.extra.image %}{% set photo = resize_image(path=page.extra.image, width=720, height=720, op="fill", format="webp", quality=75) %}
-  <a class="dossier-photo" href="{{ url }}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="{{ photo.url }}" alt="" width="720" height="720" loading="lazy"></a>{% endif %}
+  {% if page.extra.image and url %}{% set photo = resize_image(path=page.extra.image, width=960, height=600, op="fill", format="webp", quality=75) %}
+  <a class="dossier-photo" href="{{ url }}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="{{ photo.url }}" alt="" width="960" height="600" decoding="async" loading="lazy"></a>{% endif %}
   <dl class="infos">
     {% if page.year %}<dt>Année</dt><dd>{{ page.year }}</dd>{% endif %}
-    <dt>Source</dt><dd>{% if domaine %}<a class="lien-source" href="{{ url }}" target="_blank" rel="noopener">{{ domaine }}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>{% else %}<span class="muted">Lien indisponible</span>{% endif %}</dd>
+    <dt>Source</dt><dd>{% if domaine %}<a class="lien-source" href="{{ url }}" target="_blank" rel="noopener">{{ domaine }}<span class="visually-hidden"> (site externe, nouvel onglet)</span></a>{% else %}<span class="muted">Lien indisponible.</span>{% endif %}</dd>
     {% if cat_slug %}<dt>Dossier</dt><dd><a href="{{ get_taxonomy_url(kind="category", name=cat_slug) }}">{{ labels[cat_slug] | default(value=cat_slug) }}</a></dd>{% endif %}
     {% if tags %}<dt>Étiquettes</dt><dd>{% for tag in tags %}<a class="tag" href="{{ get_taxonomy_url(kind="tags", name=tag) }}">{{ tag }}</a>{% endfor %}</dd>{% endif %}
   </dl>
@@ -50,7 +52,8 @@
     {% set vu = v.extra.url | default(value="") | replace(from="https://", to="") | replace(from="http://", to="") | split(pat="/") | first %}
     <li class="mini" data-categorie="{{ c }}">
       <span class="mini-onglet"><span>{{ vu | default(value=labels[c] | default(value=c)) }}</span></span>
-      <a href="{{ v.permalink }}">{{ v.title }}</a>
+      {% set voisin_titre = v.title %}{% if voisin_titre | length > 3 and voisin_titre == voisin_titre | upper %}{% set voisin_titre = voisin_titre | capitalize %}{% endif %}
+      <a href="{{ v.permalink }}">{{ voisin_titre }}</a>
     </li>
     {% endif %}{% endfor %}
   </ul>

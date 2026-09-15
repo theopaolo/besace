@@ -49,12 +49,12 @@
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    opacity: 0.32;
+    opacity: 0.17;
     pointer-events: none;
   }
   @media (prefers-color-scheme: dark) {
     .fond {
-      opacity: 0.3;
+      opacity: 0.18;
       filter: brightness(0.75);
     }
   }
@@ -89,7 +89,7 @@
     inset-block-start: var(--space-s);
     padding: var(--space-xs);
     background: var(--bg);
-    z-index: 1;
+    z-index: 5;
   }
   .skip-link:not(:focus) {
     clip-path: inset(50%);
@@ -107,11 +107,20 @@
   }
   .site-header {
     padding-block: var(--space-m);
-    margin-block-end: var(--space-l);
+    margin-block-end: var(--space-m);
   }
   .site-header nav {
     flex-wrap: nowrap;
     align-items: center;
+  }
+  body:has(.grille) .site-header nav {
+    width: calc(100% - var(--gutter) * 2);
+    max-width: none;
+  }
+  body:has(#grille) .site-header .brand {
+    font-size: clamp(3rem, 2rem + 2.5vw, 4rem);
+    font-weight: 400;
+    gap: var(--space-xs);
   }
   .site-header a {
     text-decoration: none;
@@ -125,8 +134,9 @@
   }
   .site-header .tagline {
     font-weight: 400;
-    font-size: var(--step-0);
+    font-size: var(--step-1);
     color: var(--muted);
+    line-height: 1.4;
   }
   .lede {
     max-width: var(--measure);
@@ -188,13 +198,14 @@
   .filtres-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3xs) var(--space-s);
+    gap: var(--space-3xs) var(--space-xs);
   }
   /* Barre fixée en bas : étiquettes dépliables au-dessus, bascule + recherche sur une ligne. */
   .barre {
     position: fixed;
     inset-inline: 0;
     inset-block-end: 0;
+    padding-block-end: env(safe-area-inset-bottom);
     z-index: 2;
     border-block-start: 1px solid var(--line);
   }
@@ -202,156 +213,71 @@
     display: flex;
     gap: var(--space-xs);
   }
-  /* Frise des années : verticale sur le bord droit, ligne fine, année active en relief. */
-  .frise {
-    margin: 0;
-    position: fixed;
-    inset-inline-end: var(--space-2xs);
-    inset-block-start: 50%;
-    translate: 0 -50%;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-3xs);
-    padding-inline-end: var(--space-xs);
-    border-inline-end: 2px solid var(--line);
-  }
-  body:has(#filtres-tags:not([hidden])) .frise {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-  }
-  .frise button {
-    position: relative;
-    flex: none;
+  .explorer, .reglages { margin: 0; }
+  .explorer summary, .reglages summary {
+    color: var(--fg);
+    font-size: var(--step-0);
+    padding-block: var(--space-2xs);
     white-space: nowrap;
+    cursor: pointer;
+  }
+  .explorer summary { display: none; }
+  .explorer-contenu { display: flex; align-items: center; gap: var(--space-s); }
+  .explorer-contenu > #filtres-tags,
+  .reglages-contenu {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-end: var(--gutter);
+    background: var(--paper);
+    color: var(--fg);
+    box-shadow: 0 -2px 16px rgb(0 0 0 / 0.1);
+    padding: var(--space-s);
+    max-block-size: 60dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .explorer-contenu > #filtres-tags { inset-inline: var(--gutter); }
+  .reglages-contenu { inline-size: min(24rem, calc(100% - var(--gutter) * 2)); }
+  .reglage { display: flex; align-items: center; justify-content: space-between; gap: var(--space-s); }
+  .reglage + .reglage { margin-block-start: var(--space-s); }
+  .reglage > span { color: var(--muted); font-size: var(--step-0); }
+  .reglage-annees { align-items: start; flex-direction: column; }
+  .frise { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+  .frise button {
     border: 0;
+    border-block-end: 2px solid transparent;
+    padding: var(--space-2xs);
     background: transparent;
     color: var(--muted);
-    padding: 0 var(--space-3xs);
     font: inherit;
-    font-size: var(--step--2, 0.75rem);
-    font-weight: 300;
-    line-height: 1.7;
+    font-size: var(--step-0);
     font-variant-numeric: tabular-nums;
     cursor: pointer;
   }
-  .frise button[aria-pressed="true"] {
-    font-weight: 500;
-  }
-  .frise button::after {
-    content: "";
-    position: absolute;
-    inset-inline-end: calc(-1 * var(--space-xs) - 4px);
-    inset-block-start: 50%;
-    inline-size: 6px;
-    block-size: 6px;
-    translate: 0 -50%;
-    border-radius: 50%;
-    background: var(--line);
-    transition: background 0.15s, scale 0.15s;
-  }
-  .frise button:hover,
-  .frise button[aria-pressed="true"] {
-    color: var(--fg);
-  }
-  .frise button[aria-pressed="true"]::after {
-    background: var(--accent);
-    scale: 1.5;
-  }
-  /* Outils épinglés en bas à droite, empilés sur le verre. */
-  .outils {
-    margin: 0;
-    position: fixed;
-    inset-inline-end: var(--space-s);
-    inset-block-end: calc(var(--barre-h, 4rem) + var(--space-s));
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    background: var(--verre);
-    -webkit-backdrop-filter: var(--verre-filtre);
-    backdrop-filter: var(--verre-filtre);
-    box-shadow: 0 1px 0 var(--verre-bord) inset, 0 4px 12px rgb(0 0 0 / 0.15);
-  }
+  .frise button[aria-pressed="true"] { border-color: var(--accent); color: var(--fg); }
+  .outils { display: flex; align-items: center; gap: var(--space-2xs); }
+  .outils output { min-inline-size: 4rem; text-align: center; font-size: var(--step-0); font-variant-numeric: tabular-nums; }
   .outils button {
-    inline-size: 2.5rem;
-    block-size: 2.5rem;
-    display: grid;
-    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
     border: 0;
     background: transparent;
     color: var(--fg);
     font: inherit;
     font-size: var(--step-2);
-    font-weight: 600;
     cursor: pointer;
   }
-  .outils button:hover {
-    color: var(--accent);
-  }
-  .outils button:disabled {
-    color: var(--muted);
-    opacity: 0.4;
-    cursor: default;
-  }
-  /* Le dé : frémit au survol, tourne au lancer. */
-  .de svg {
-    transition: rotate 0.2s ease-out;
-  }
-  .de:hover svg {
-    rotate: -12deg;
-  }
-  .de.lance svg {
-    animation: lancer 0.5s ease-out;
-  }
-  @keyframes lancer {
-    from { rotate: 0deg; scale: 1; }
-    50% { scale: 1.3; }
-    to { rotate: 360deg; scale: 1; }
-  }
-  /* Noir et blanc : un carré moitié noir moitié blanc, bordure, qui s'inverse quand actif. */
-  .nb span {
-    inline-size: 1.25rem;
-    block-size: 1.25rem;
-    border: 2px solid currentColor;
-    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
-    transition: rotate 0.25s ease-out;
-  }
-  .nb[aria-pressed="true"] span {
-    rotate: 180deg;
-  }
-  @media (width < 60rem) {
-    .frise {
-      translate: 0;
-      inset-block-start: auto;
-      inset-block-end: calc(var(--barre-h, 4rem) + var(--space-s));
-      inset-inline-end: auto;
-      inset-inline-start: var(--gutter);
-      max-inline-size: calc(100% - var(--gutter) * 2 - 10.5rem);
-      flex-direction: row;
-      overflow-x: auto;
-      scrollbar-width: none;
-      gap: var(--space-xs);
-      border: 0;
-      padding: var(--space-3xs) var(--space-xs);
-      background: var(--verre);
-      -webkit-backdrop-filter: var(--verre-filtre);
-      backdrop-filter: var(--verre-filtre);
-    }
-    .outils {
-      flex-direction: row;
-      inset-inline-end: var(--gutter);
-    }
-    .outils button {
-      inline-size: 2.4rem;
-      block-size: 2.4rem;
-    }
-    .frise button::after {
-      display: none;
-    }
-  }
+  .outils button:disabled, .de:disabled { opacity: 0.4; cursor: default; }
+  .de, .nb { display: flex; align-items: center; justify-content: center; gap: var(--space-2xs); border: 0; background: transparent; color: var(--fg); font: inherit; font-size: var(--step-0); padding-block: var(--space-2xs); cursor: pointer; }
+  .de svg { inline-size: 1.125rem; block-size: 1.125rem; }
+  .nb span { inline-size: 1rem; block-size: 1rem; border: 1px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+  .nb[aria-pressed="true"] { color: var(--accent); }
+  .nb[aria-pressed="true"] span { rotate: 180deg; }
+  .recherche-champ kbd { font: inherit; font-size: var(--step-0); color: var(--muted); padding-inline-start: var(--space-xs); }
+  .filtres-actifs { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-s); padding: 0 var(--gutter) var(--space-xs); font-size: var(--step-0); }
+  .filtres-actifs p { margin: 0; color: var(--muted); }
+  .filtres-actifs button, .reessayer { flex: none; padding: 0; border: 0; background: transparent; color: var(--fg); font: inherit; text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; }
+  .erreur-actions { display: flex; flex-wrap: wrap; gap: var(--space-s); margin-block-start: var(--space-m); }
   .vues button {
     border: 0;
     border-block-end: 2px solid transparent;
@@ -369,10 +295,9 @@
   }
   .barre-rangee {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-2xs) var(--space-m);
-    padding-block: var(--space-2xs);
+    gap: var(--space-s);
+    padding: var(--space-xs) var(--gutter);
   }
   .statut {
     flex: none;
@@ -411,13 +336,13 @@
     color: var(--accent);
   }
   .barre .recherche-champ {
-    flex: 1 1 8rem;
+    flex: 1 1 14rem;
     max-inline-size: 28rem;
-    margin-inline-start: auto;
-    padding-block: var(--space-3xs);
+    margin-inline-start: 0;
+    padding-block: var(--space-2xs);
   }
   .barre .recherche-champ input {
-    font-size: var(--step-0);
+    font-size: 1rem;
   }
   #filtres-tags {
     border-block-end: 1px solid var(--line);
@@ -430,7 +355,7 @@
   }
   /* --barre-h : hauteur réelle de la barre, mesurée par l'index (ResizeObserver). */
   body:has(.barre) {
-    padding-block-end: calc(var(--barre-h, 4rem) + var(--space-l));
+    padding-block-end: calc(var(--barre-h, 8rem) + var(--space-l));
   }
   .filtres-cats button {
     border: 0;
@@ -569,35 +494,24 @@
   :root[data-nb] .fiche-image img {
     filter: grayscale(1) contrast(1.2);
   }
-  /* Sur l'index, la frise des années occupe le bord droit. */
-  @media (width >= 60rem) {
-    body:has(.frise) .grille {
-      margin-inline-end: calc(50% - 50vw + var(--gutter) + 4rem);
-    }
-  }
-  /* Après un filtre, les fiches se posent : léger décalage, douze premières échelonnées. */
-  @keyframes poser {
-    from { opacity: 0; translate: 0 6px; }
-  }
-  .grille[data-anime] .fiche:not([hidden]) {
-    animation: poser 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--i, 0) * 22ms);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .grille[data-anime] .fiche:not([hidden]) {
-      animation: none;
-    }
-  }
-  /* Le dossier tiré au dé : liseré olive qui s'efface. */
+  /* Le dossier tiré au dé : son onglet passe en encre puis revient à sa teinte. Pas de liseré, la languette casserait le trait. */
+  /* Le fond revient vite (ease-in : il reste encre puis lâche), le texte bascule d'un coup à 60 % pour ne jamais se fondre dans le fond. */
   @keyframes tire {
-    from { outline-color: var(--accent); }
-    to { outline-color: transparent; }
+    from { background-color: var(--fg); color: var(--bg); }
+    60% { color: var(--bg); }
+    61% { color: var(--fg); }
+    to { background-color: color-mix(in oklab, var(--papier) 95%, var(--fg)); color: var(--fg); }
   }
-  .fiche[data-tire] {
-    outline: 3px solid transparent;
-    outline-offset: 4px;
-    animation: tire 1.4s ease-out both;
+  .fiche[data-tire] .fiche-onglet {
+    background-color: var(--fg);
+    color: var(--bg);
+    animation: tire 600ms ease-in both;
   }
+  .fiche[data-tire] .fiche-onglet a { transition: none; }
+  .fiche[data-tire] .fiche-onglet a,
+  .fiche[data-tire] .fiche-onglet::before,
+  .fiche[data-ouvert] .fiche-onglet a,
+  .fiche[data-ouvert] .fiche-onglet::before { color: inherit; }
   .grille[data-dense] .fiche-texte,
   .grille[data-dense] .postit,
   .grille[data-dense] .fiche-image {
@@ -614,7 +528,7 @@
   }
   .grille[data-vue="liste"] > .fiche {
     display: grid;
-    grid-template-columns: minmax(12rem, 2fr) minmax(0, 3fr) auto;
+    grid-template-columns: minmax(12rem, 2fr) minmax(0, 3fr) minmax(0, 1fr);
     grid-template-areas: "titre texte tags" "onglet texte tags";
     align-items: baseline;
     column-gap: var(--space-m);
@@ -650,7 +564,7 @@
   .grille[data-vue="liste"] .fiche-onglet::after {
     content: " · " attr(data-annee);
   }
-  .grille[data-vue="liste"] .fiche-titre {
+  .grille[data-vue="liste"] .fiche .fiche-titre {
     grid-area: titre;
     font-size: var(--step-1);
     font-weight: 600;
@@ -668,12 +582,11 @@
   .grille[data-vue="liste"] .fiche-meta {
     grid-area: tags;
     justify-content: flex-end;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
   .grille[data-vue="liste"] .tag {
-    font-size: 0.8rem;
-    padding-block: 0.1em;
-    background: var(--lavender);
+    font-size: var(--step-0);
+    padding-block: 0;
   }
   @media (max-width: 45rem) {
     .grille[data-vue="liste"] > .fiche {
@@ -703,7 +616,7 @@
     position: absolute;
     inset: var(--tab-h) 0 0 0;
     z-index: -1;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 6px 12px rgb(0 0 0 / 0.1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 9px rgb(0 0 0 / 0.07);
   }
   .fiche-onglet {
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
@@ -723,9 +636,7 @@
   .fiche > * + * {
     margin-block-start: var(--space-xs);
   }
-  .fiche[hidden] {
-    display: none;
-  }
+
   /* L'onglet : une languette légèrement plus foncée que le corps, coin droit biseauté. */
   .fiche-onglet {
     position: absolute;
@@ -737,15 +648,15 @@
     padding-inline: var(--space-m) calc(var(--space-m) + 0.6rem);
     display: flex;
     align-items: center;
-    background: color-mix(in oklab, var(--papier) 90%, var(--fg));
+    background: color-mix(in oklab, var(--papier) 95%, var(--fg));
     clip-path: polygon(0 0, calc(100% - 0.9rem) 0, 100% 100%, 0 100%);
     font-size: var(--step-0);
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: .5rem;
+    padding-inline-start: var(--space-s);
   }
   /* Icône de catégorie sur l'onglet : lisible sans la couleur. Masque SVG teinté par currentColor. */
   .fiche-onglet::before,
@@ -769,9 +680,7 @@
   [data-categorie~="societe"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Ccircle cx=%226%22 cy=%223.2%22 r=%222.2%22/%3E%3Ccircle cx=%222.6%22 cy=%229%22 r=%222.2%22/%3E%3Ccircle cx=%229.4%22 cy=%229%22 r=%222.2%22/%3E%3C/svg%3E"); --icone-affichee: block; }
   [data-categorie~="ressources"] { --icone: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath d=%22M1.5 2.5h9M1.5 6h9M1.5 9.5h6%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22/%3E%3C/svg%3E"); --icone-affichee: block; }
   .fiche-onglet a {
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 0.2em;
+    text-decoration: none;
   }
   .fiche .fiche-onglet a::after,
   .page-url a::after {
@@ -794,39 +703,31 @@
   .page-url a {
     color: var(--muted);
   }
-  /* Photo agrafée en haut à droite, comme un tirage papier. */
   .fiche-image {
-    float: inline-end;
-    inline-size: 5.5rem;
-    margin: 0 0 var(--space-2xs) var(--space-s);
-    padding: 0.3rem 0.3rem 1rem;
+    display: block;
+    margin: 0 0 var(--space-s);
+    padding: 0.3rem 0.3rem 0.65rem;
     background: #fff;
-    box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
-    transform: rotate(2.5deg);
-    transition: transform 0.25s ease-out;
-  }
-  /* Au survol, la photo bascule d'un angle tiré au sort par base.html. */
-  .fiche:hover .fiche-image {
-    transform: rotate(var(--tilt, -4deg)) scale(1.06);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+    transform: rotate(0.7deg);
   }
   .fiche-image img {
     display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 8 / 5;
     object-fit: cover;
   }
   .fiche-titre {
-    font-size: var(--step-2);
-    font-weight: 650;
+    font-size: clamp(1.375rem, 1.2rem + 0.3vw, 1.5rem);
+    font-weight: 550;
     margin: 0;
-    text-wrap: balance;
-    line-height: 1.2;
+    text-wrap: pretty;
+    line-height: 1.18;
     overflow-wrap: anywhere;
   }
-  /* Titre long : plus petit et coupé à quatre lignes. */
   .fiche[data-long] .fiche-titre {
-    font-size: var(--step-1);
+    font-size: clamp(1.25rem, 1.1rem + 0.25vw, 1.375rem);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
@@ -835,7 +736,7 @@
   .fiche-texte {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 4;
     overflow: hidden;
   }
   .fiche-titre a {
@@ -846,7 +747,9 @@
     text-decoration: underline;
   }
   .fiche-texte {
-    font-size: var(--step-0);
+    margin-block-start: var(--space-xs);
+    font-size: 0.9375rem;
+    line-height: 1.45;
     color: var(--muted);
     max-width: 58ch;
   }
@@ -863,7 +766,7 @@
     transform: rotate(-0.6deg);
     font-size: var(--step-1);
     clear: both;
-    margin-bottom: 1rem;
+    margin-block-end: var(--space-s);
   }
   .postit > * {
     margin-block: 0;
@@ -878,23 +781,44 @@
   .fiche-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3xs) var(--space-2xs);
-    margin: 0;
+    gap: var(--space-2xs) var(--space-xs);
+    margin: var(--space-s) 0 0;
   }
   .fiche-meta a,
   .signet-meta a {
     text-decoration: none;
   }
-  /* Sur papier teinté, l'étiquette prend une nuance du papier plutôt que le lavande. */
   .fiche .tag {
-    background: color-mix(in oklab, currentColor 9%, transparent);
+    padding: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: var(--step-0);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--muted) 40%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  .fiche .tag:hover { color: var(--accent); background: transparent; }
+  /* Chaque dossier a son petit angle de travers, distribué par position, pour le survol et l'ouverture. */
+  .grille > .fiche:nth-child(3n) { --tour: 0.45deg; }
+  .grille > .fiche:nth-child(3n + 1) { --tour: -0.35deg; }
+  .grille > .fiche:nth-child(3n + 2) { --tour: 0.25deg; }
+  /* Le dossier ouvert reste sorti de la pile tant que la feuille est là : onglet en encre, de travers, ombre plus longue. */
+  .grille:not([data-vue="liste"]) > .fiche[data-ouvert] { rotate: var(--tour); }
+  .fiche[data-ouvert] .fiche-onglet { background-color: var(--fg); color: var(--bg); }
+  .fiche[data-ouvert]::after { box-shadow: 0 2px 3px rgb(0 0 0 / 0.12), 0 10px 20px rgb(0 0 0 / 0.12); }
+  /* Survol : le dossier bouge d'un cran, vite, comme du papier qu'on touche. Pas de lévitation, l'ombre ne change pas. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .grille:not([data-vue="liste"]) > .fiche { transition: rotate 120ms cubic-bezier(0.2, 0, 0, 1); }
+    .grille:not([data-vue="liste"]) > .fiche:hover { rotate: var(--tour); }
+    .fiche-image { transition: transform 120ms cubic-bezier(0.2, 0, 0, 1); }
+    .fiche:hover .fiche-image, .fiche:focus-within .fiche-image { transform: rotate(0); }
   }
   .vide {
     max-inline-size: 24rem;
     margin: var(--space-xl) auto;
     padding: var(--space-l) var(--space-m);
     background: var(--paper);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 6px 12px rgb(0 0 0 / 0.1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 9px rgb(0 0 0 / 0.07);
     text-align: center;
     color: var(--muted);
     rotate: -0.6deg;
@@ -920,6 +844,7 @@
     outline-offset: 2px;
   }
   html {
+    scrollbar-gutter: stable;
     caret-color: var(--accent);
     accent-color: var(--accent);
     scrollbar-color: color-mix(in oklab, var(--fg) 25%, transparent) transparent;
@@ -1029,30 +954,22 @@
   .dossier-texte > * {
     margin-block: 0 var(--space-s);
   }
-  /* Photo agrafée en haut à droite, comme un tirage papier. */
   .dossier-photo {
-    float: inline-end;
-    inline-size: clamp(6rem, 28%, 11rem);
-    margin: 0 0 var(--space-s) var(--space-m);
-    padding: 0.4rem 0.4rem 1.4rem;
-    background: #fff;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
-    transform: rotate(2.5deg);
-  }
-  .dossier-photo img {
     display: block;
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 1;
-    object-fit: cover;
+    margin: 0 0 var(--space-l);
+    padding: 0.3rem 0.3rem 0.65rem;
+    background: #fff;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
   }
+  .dossier-photo img { inline-size: 100%; block-size: auto; aspect-ratio: 8 / 5; object-fit: cover; }
   /* Signets voisins : mini-dossiers, onglet avec glyphe et domaine, papier de la catégorie. */
   .voisins {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    align-items: start;
     gap: var(--space-m) var(--space-s);
   }
   .mini {
@@ -1083,7 +1000,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3xs);
-    background: color-mix(in oklab, var(--papier) 90%, var(--fg));
+    background: color-mix(in oklab, var(--papier) 95%, var(--fg));
     clip-path: polygon(0 0, calc(100% - 0.8rem) 0, 100% 100%, 0 100%);
     font-size: var(--step--1);
     color: color-mix(in oklab, var(--fg) 82%, var(--papier));
@@ -1113,31 +1030,45 @@
   .mini[data-categorie~="design"] { --papier: var(--paper-design); }
   .mini[data-categorie~="developpement"] { --papier: var(--paper-dev); }
   .mini[data-categorie~="ressources"] { --papier: var(--paper-ressources); }
-  /* Le volet : la feuille entre par la droite, légèrement tournée, puis se pose. */
   .volet {
-    margin: 0;
+    margin: 0 0 0 auto;
     position: fixed;
-    inset-block: 0;
-    inset-inline-end: 0;
-    z-index: 4;
+    inset: 0;
     inline-size: min(100%, 46rem);
+    max-inline-size: 100%;
+    block-size: 100dvh;
+    max-block-size: 100dvh;
     overflow-y: auto;
-    padding: var(--space-s) var(--space-s) calc(var(--space-2xl) + var(--space-s));
-    translate: 100% 0;
-    transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    overscroll-behavior: contain;
+    padding: var(--space-s);
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    /* Réglages de l'arrivée de la feuille : position de départ, durée, courbe. La fermeture a ses propres valeurs plus bas. */
+    --volet-depart: translateX(10%) rotate(1.6deg);
+    --volet-duree: 240ms;
+    --volet-courbe: cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: translateX(100%) rotate(0.7deg);
+    transform-origin: 100% 100%; /* pivot en bas à droite : la feuille tourne sur place plus qu'elle ne glisse */
+    opacity: 0;
+    /* Fermeture 180 ms. Les transitions s'interrompent d'elles-mêmes si on rouvre en cours de route. */
+    transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), opacity 180ms, display 180ms allow-discrete, overlay 180ms allow-discrete;
   }
-  .volet.ouvert {
-    translate: 0 0;
+  .volet[open] {
+    transform: none;
+    opacity: 1;
+    transition-duration: var(--volet-duree);
+    transition-timing-function: var(--volet-courbe), ease-out;
   }
-  .volet .dossier {
-    min-block-size: calc(100dvh - var(--space-s) * 2);
-    max-inline-size: none;
-    rotate: 1.2deg;
-    transition: rotate 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+  .volet::backdrop { background: rgb(0 0 0 / 0); transition: background 180ms, display 180ms allow-discrete, overlay 180ms allow-discrete; }
+  .volet[open]::backdrop { background: rgb(0 0 0 / 0.18); transition-duration: var(--volet-duree); }
+  @starting-style {
+    .volet[open] { transform: var(--volet-depart); opacity: 0; }
+    .volet[open]::backdrop { background: rgb(0 0 0 / 0); }
   }
-  .volet.ouvert .dossier {
-    rotate: 0deg;
-  }
+  .volet .dossier { min-block-size: calc(100dvh - var(--space-s) * 2); max-inline-size: none; }
+  body:has(.volet[open]) { overflow: hidden; }
+  .volet[data-clavier], .volet[data-clavier]::backdrop { transition: none; }
   .volet-fermer {
     position: sticky;
     inset-block-start: var(--space-s);
@@ -1167,9 +1098,10 @@
     color: var(--accent-ink);
   }
   @media (prefers-reduced-motion: reduce) {
-    .volet, .volet .dossier {
-      transition: none;
-    }
+    .volet, .volet::backdrop, .fiche-image, .mini, .fiche, .fiche::after, .etiquettes-toggle::before { transition: none; }
+    .fiche[data-tire] .fiche-onglet { animation: none; }
+    .fiche[data-ouvert] { rotate: none; }
+
   }
   @media (max-width: 45rem) {
     .dossier {
@@ -1189,29 +1121,46 @@
   .site-footer p {
     max-width: var(--measure);
   }
-  @media (max-width: 45rem) {
-    .grille {
-      columns: 1;
+  @media (width < 75rem) {
+    .barre-rangee { flex-wrap: wrap; }
+    .explorer summary { display: list-item; }
+    .explorer-contenu {
+      position: absolute;
+      inset-block-end: 100%;
+      inset-inline: var(--gutter);
+      display: block;
+      max-block-size: 60dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--paper);
+      padding: var(--space-s);
+      box-shadow: 0 -2px 16px rgb(0 0 0 / 0.1);
     }
-    .barre .recherche-champ {
-      order: 1;
-      flex-basis: 100%;
-      max-inline-size: none;
-    }
-    .filtres-cats {
-      flex: 1 1 100%;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      margin-inline: calc(-1 * var(--gutter));
-      padding-inline: var(--gutter);
-      mask: linear-gradient(90deg, #000 calc(100% - 2rem), transparent);
-    }
-    .filtres-cats button {
-      white-space: nowrap;
-    }
-    .statut {
-      margin-inline-start: auto;
-    }
+    .explorer-contenu > #filtres-tags { position: static; padding: 0; box-shadow: none; }
+    .etiquettes-toggle { margin-block-start: var(--space-s); }
+    .filtres-cats { flex-wrap: wrap; gap: var(--space-2xs) var(--space-s); }
+    .filtres-tags { max-block-size: none; }
+    .barre .recherche-champ { max-inline-size: none; }
+    .statut { margin-inline-start: auto; }
   }
+  @media (width < 45rem) {
+    .grille { columns: 1; }
+    .barre-rangee { gap: 0 var(--space-s); padding-block: var(--space-2xs); }
+    .barre .recherche-champ { flex: 1 1 100%; margin-block-end: var(--space-3xs); }
+    .recherche-champ kbd { display: none; }
+    .explorer summary, .reglages summary, .de { min-block-size: 2.75rem; }
+    .site-header nav { align-items: start; gap: var(--space-s); }
+    .site-header .tagline { max-inline-size: 17rem; font-size: var(--step-0); }
+    .contribuer { font-size: var(--step-0); max-inline-size: 7rem; text-align: end; }
+    .volet { padding: var(--space-2xs); }
+    .volet .dossier { min-block-size: calc(100dvh - var(--space-s)); }
+    .dossier-titre { padding-inline-end: var(--space-m); }
+  }
+  @media (pointer: coarse) {
+    .filtres-cats button, .filtres-tags button, .frise button, .vues button, .nb { min-block-size: 2.75rem; }
+    .fiche .tag { padding-block: var(--space-2xs); }
+  }
+}
+@layer utilities {
+  [hidden] { display: none !important; }
 }

@@ -12,24 +12,21 @@
 {% set annees = annees | sort | reverse %}
 {% set heading_level = 2 %}
 <div class="barre" role="search">
-  {% if all_tags.items %}
-  {# Étiquettes par groupe (config.extra.tag_groups), triées par usage, les rares (< 3 signets) repliées. #}
-  {% set par_usage = all_tags.items | sort(attribute="page_count") | reverse %}
-  {% set_global places = [] %}
-  <div class="container" data-width="content" id="filtres-tags" hidden>
-    <div class="filtres-tags" role="group" aria-label="Filtrer par étiquette">
-      {% for groupe in config.extra.tag_groups | default(value=[]) %}{% set nom = groupe.nom %}{% set liste = groupe.tags %}
-        {% set_global tri = [] %}
-        {% for term in par_usage %}{% if term.slug in liste %}{% set_global tri = [...tri, term] %}{% set_global places = [...places, term.slug] %}{% endif %}{% endfor %}
-        {% if tri %}{% include "tags_groupe.html" %}{% endif %}
-      {% endfor %}
-      {% set_global tri = [] %}
-      {% for term in par_usage %}{% if term.slug not in places %}{% set_global tri = [...tri, term] %}{% endif %}{% endfor %}
-      {% if tri %}{% set nom = "Autres" %}{% include "tags_groupe.html" %}{% endif %}
-    </div>
-  </div>
-  {% endif %}
-  <div class="barre-rangee container" data-width="content">
+  <div class="barre-rangee">
+    <label class="recherche-champ" for="recherche">
+      <span class="visually-hidden">Rechercher dans les signets</span>
+      <input
+        type="search"
+        id="recherche"
+        name="recherche"
+        placeholder="Rechercher un signet…"
+        autocomplete="off"
+      />
+      <kbd aria-hidden="true">/</kbd>
+    </label>
+    <details class="explorer" id="explorer">
+      <summary>Filtres<span id="filtres-count"></span></summary>
+      <div class="explorer-contenu">
     <div class="filtres-cats" role="group" aria-label="Filtrer par catégorie">
       <button type="button" data-cat="" aria-pressed="true">Tout</button>
       {% for term in cats.items %}{% set label = labels[term.slug] | default(value=term.name) %}<button type="button" data-cat="{{ term.slug }}" aria-pressed="false">{{ label }}</button>{% endfor %}
@@ -47,43 +44,55 @@
         >{{ all_tags.items | length }}</span
       ></button
     >{% endif %}
-    <label class="recherche-champ" for="recherche">
-      <span class="visually-hidden">Rechercher dans les signets</span>
-      <input
-        type="search"
-        id="recherche"
-        name="recherche"
-        placeholder="Rechercher un signet…"
-        autocomplete="off"
-      />
-    </label>
-    <p class="statut" id="statut" aria-live="polite">{{ section.pages | length }} signets</p>
-    <div class="vues" role="group" aria-label="Affichage">
-      <button type="button" data-vue="dossiers" aria-pressed="true">Dossiers</button>
-      <button type="button" data-vue="liste" aria-pressed="false">Liste</button>
+  {% if all_tags.items %}
+  {# Étiquettes par groupe (config.extra.tag_groups), triées par usage, les rares (< 3 signets) repliées. #}
+  {% set par_usage = all_tags.items | sort(attribute="page_count") | reverse %}
+  {% set_global places = [] %}
+  <div id="filtres-tags" hidden>
+    <div class="filtres-tags" role="group" aria-label="Filtrer par étiquette">
+      {% for groupe in config.extra.tag_groups | default(value=[]) %}{% set nom = groupe.nom %}{% set liste = groupe.tags %}
+        {% set_global tri = [] %}
+        {% for term in par_usage %}{% if term.slug in liste %}{% set_global tri = [...tri, term] %}{% set_global places = [...places, term.slug] %}{% endif %}{% endfor %}
+        {% if tri %}{% include "tags_groupe.html" %}{% endif %}
+      {% endfor %}
+      {% set_global tri = [] %}
+      {% for term in par_usage %}{% if term.slug not in places %}{% set_global tri = [...tri, term] %}{% endif %}{% endfor %}
+      {% if tri %}{% set nom = "Autres" %}{% include "tags_groupe.html" %}{% endif %}
     </div>
+  </div>
+  {% endif %}
+      </div>
+    </details>
+    <details class="reglages" id="reglages">
+      <summary>Options</summary>
+      <div class="reglages-contenu">
+        <div class="reglage"><span>Affichage</span><div class="vues" role="group" aria-label="Affichage">
+          <button type="button" data-vue="dossiers" aria-pressed="true">Dossiers</button>
+          <button type="button" data-vue="liste" aria-pressed="false">Liste</button>
+        </div></div>
+        <div class="reglage"><span>Taille des fiches</span><div class="outils" role="group" aria-label="Taille des fiches">
+          <button type="button" data-zoom="-1" aria-label="Réduire les fiches">−</button>
+          <output id="zoom-valeur" aria-live="polite">100 %</output>
+          <button type="button" data-zoom="1" aria-label="Agrandir les fiches">+</button>
+        </div></div>
+        <div class="reglage"><span>Couleurs</span><button type="button" id="nb" class="nb" aria-pressed="false"><span aria-hidden="true"></span>Noir et blanc</button></div>
+        <div class="reglage reglage-annees"><span>Filtrer par année</span><nav class="frise" aria-label="Filtrer par année">
+          {% for a in annees %}<button type="button" data-annee="{{ a }}" aria-pressed="false">{{ a }}</button>{% endfor %}
+        </nav></div>
+      </div>
+    </details>
+    <button type="button" id="hasard" class="de"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.8" fill="currentColor"/><circle cx="16" cy="8" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="8" cy="16" r="1.8" fill="currentColor"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg><span>Piocher</span></button>
+    <p class="statut" id="statut" aria-live="polite">{{ section.pages | length }} signets</p>
+  </div>
+  <div class="filtres-actifs" id="filtres-actifs" hidden>
+    <p id="filtres-resume"></p><button type="button" id="effacer">Tout effacer</button>
   </div>
 </div>
 
-{# Frise des années, sur le bord droit. #}
-<nav class="frise" aria-label="Filtrer par année">
-  {% for a in annees %}<button type="button" data-annee="{{ a }}" aria-pressed="false">{{ a }}</button>{% endfor %}
-</nav>
-{# Outils épinglés en bas à droite : zoom, dé, noir et blanc. #}
-<div class="outils" role="group" aria-label="Outils">
-  <button type="button" data-zoom="1" aria-label="Agrandir les fiches">+</button>
-  <button type="button" data-zoom="-1" aria-label="Réduire les fiches">−</button>
-  <button type="button" id="hasard" class="de" aria-label="Un signet au hasard">
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.8" fill="currentColor"/><circle cx="16" cy="8" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="8" cy="16" r="1.8" fill="currentColor"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>
-  </button>
-  <button type="button" id="nb" class="nb" aria-pressed="false" aria-label="Noir et blanc"><span></span></button>
-</div>
-
-{# Volet : la fiche s'ouvre sur le tableau, chargée depuis sa page. #}
-<aside class="volet" id="volet" hidden role="dialog" aria-modal="true" aria-labelledby="volet-titre">
-  <button type="button" class="volet-fermer" id="volet-fermer" aria-label="Fermer">×</button>
+<dialog class="volet" id="volet" aria-labelledby="volet-titre">
+  <button type="button" class="volet-fermer" id="volet-fermer" aria-label="Fermer" autofocus>Fermer</button>
   <div class="volet-contenu" id="volet-contenu"></div>
-</aside>
+</dialog>
 
 <ul class="grille" id="grille" role="list">
   {% for page in section.pages %}{% include "signet.html" %}{% endfor %}
@@ -110,9 +119,23 @@
   new ResizeObserver(([e]) =>
     document.documentElement.style.setProperty("--barre-h", `${e.contentRect.height}px`)
   ).observe(document.querySelector(".barre"));
+  const explorer = document.getElementById("explorer");
+  const reglages = document.getElementById("reglages");
+  const large = matchMedia("(min-width: 75rem)");
+  function adapterDock() { explorer.open = large.matches; reglages.open = false; }
+  large.addEventListener("change", adapterDock);
+  adapterDock();
+  for (const panneau of [explorer, reglages]) panneau.addEventListener("toggle", () => {
+    if (panneau.open && !large.matches) (panneau === explorer ? reglages : explorer).open = false;
+  });
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".barre")) return;
+    reglages.open = false;
+    if (!large.matches) explorer.open = false;
+  });
   const boutonsAnnee = document.querySelectorAll(".frise [data-annee]");
 
-  // Zoom : paliers de 0.4 à 1.4, molette avec ctrl/cmd ou boutons, ancré sur la position de défilement.
+  // Le zoom des fiches laisse intact le zoom du navigateur.
   const paliers = [0.4, 0.55, 0.7, 0.85, 1, 1.2, 1.4];
   let zoom = 1;
   function majZoom(z, ancre = window.innerHeight / 2) {
@@ -129,16 +152,12 @@
     if (paliers[i]) majZoom(paliers[i]);
   }
   function majBoutonsZoom() {
+    document.getElementById("zoom-valeur").textContent = `${Math.round(zoom * 100)} %`;
     for (const b of document.querySelectorAll("[data-zoom]"))
       b.disabled = !paliers[paliers.indexOf(zoom) + +b.dataset.zoom];
   }
   for (const b of document.querySelectorAll("[data-zoom]"))
     b.addEventListener("click", () => pasZoom(+b.dataset.zoom));
-  window.addEventListener("wheel", (e) => {
-    if (!(e.ctrlKey || e.metaKey)) return;
-    e.preventDefault();
-    pasZoom(e.deltaY < 0 ? 1 : -1);
-  }, { passive: false });
   try { const z = +localStorage.getItem("zoom"); if (paliers.includes(z)) majZoom(z); } catch {}
   majBoutonsZoom();
 
@@ -152,38 +171,92 @@
   nb.addEventListener("click", () => majNb(!document.documentElement.hasAttribute("data-nb")));
   try { if (localStorage.getItem("nb")) majNb(true); } catch {}
 
-  // Volet : clic sur un titre → fetch de la page, on injecte #dossier, l'URL suit.
   const volet = document.getElementById("volet");
   const voletContenu = document.getElementById("volet-contenu");
   const voletFermer = document.getElementById("volet-fermer");
   let origine = null;
-  async function ouvrir(href, pousser = true) {
-    const html = await (await fetch(href)).text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const dossier = doc.getElementById("dossier");
-    if (!dossier) { location.href = href; return; }
-    // Titre en h2 dans le volet (le h1 reste celui de la page), et repère pour aria-labelledby.
-    const h1 = dossier.querySelector("h1");
-    if (h1) { const h2 = document.createElement("h2"); h2.className = h1.className; h2.id = "volet-titre"; h2.append(...h1.childNodes); h1.replaceWith(h2); }
-    voletContenu.replaceChildren(dossier);
-    volet.hidden = false;
-    for (const el of document.querySelectorAll("body > :not(main):not(script), #contenu > :not(#volet)")) el.inert = true;
-    volet.scrollTop = 0;
-    requestAnimationFrame(() => volet.classList.add("ouvert"));
-    voletFermer.focus();
-    if (pousser) history.pushState({ volet: href }, "", href);
+  let chargement;
+  let tirage; // ouverture différée après un coup de dé
+  const mouvementReduit = matchMedia("(prefers-reduced-motion: reduce)");
+  function marquer(f, duree = 1400) {
+    for (const x of grille.querySelectorAll("[data-tire]")) x.removeAttribute("data-tire");
+    f.setAttribute("data-tire", "");
+    setTimeout(() => f.removeAttribute("data-tire"), duree);
   }
-  function fermer(pousser = true) {
-    if (volet.hidden) return;
-    volet.classList.remove("ouvert");
-    volet.addEventListener("transitionend", () => { volet.hidden = true; }, { once: true });
-    for (const el of document.querySelectorAll("[inert]")) el.inert = false;
-    if (pousser) history.pushState({}, "", location.pathname.startsWith("/signets/") ? "/" : location.href);
-    origine?.focus();
+
+  async function ouvrir(href, pousser = true) {
+    clearTimeout(tirage);
+    chargement?.abort();
+    const requete = chargement = new AbortController();
+    const dejaOuvert = volet.open;
+    grille.querySelector("[data-ouvert]")?.removeAttribute("data-ouvert");
+    origine?.closest(".fiche")?.removeAttribute("data-tire");
+    origine?.closest(".fiche")?.setAttribute("data-ouvert", "");
+    const attente = document.createElement("article");
+    attente.className = "dossier";
+    const titre = document.createElement("h2");
+    titre.id = "volet-titre";
+    titre.className = "dossier-titre";
+    titre.textContent = origine?.textContent.trim() || "Signet";
+    const message = document.createElement("p");
+    message.setAttribute("role", "status");
+    message.textContent = "Ouverture du signet…";
+    attente.append(titre, message);
+    voletContenu.replaceChildren(attente);
+    voletContenu.setAttribute("aria-busy", "true");
+    if (!dejaOuvert) volet.showModal();
+    volet.scrollTop = 0;
+    voletFermer.focus({ preventScroll: true });
+    if (pousser) history[dejaOuvert ? "replaceState" : "pushState"]({ volet: href }, "", href);
+    try {
+      const response = await fetch(href, { signal: requete.signal });
+      if (!response.ok) throw new Error("Page indisponible");
+      const doc = new DOMParser().parseFromString(await response.text(), "text/html");
+      if (requete.signal.aborted) return;
+      const dossier = doc.getElementById("dossier");
+      if (!dossier) throw new Error("Signet indisponible");
+      const h1 = dossier.querySelector("h1");
+      const h2 = document.createElement("h2");
+      h2.className = h1.className;
+      h2.id = "volet-titre";
+      h2.append(...h1.childNodes);
+      h1.replaceWith(h2);
+      voletContenu.replaceChildren(dossier);
+    } catch (error) {
+      if (requete.signal.aborted) return;
+      message.textContent = "Ce signet n’a pas pu être chargé. Réessayez ou ouvrez sa page.";
+      message.setAttribute("role", "alert");
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.className = "reessayer";
+      retry.textContent = "Réessayer";
+      retry.addEventListener("click", () => ouvrir(href, false));
+      const lien = document.createElement("a");
+      lien.href = href;
+      lien.textContent = "Ouvrir la page";
+      const actions = document.createElement("p");
+      actions.className = "erreur-actions";
+      actions.append(retry, lien);
+      attente.append(actions);
+    } finally {
+      if (!requete.signal.aborted) voletContenu.removeAttribute("aria-busy");
+    }
+  }
+  function fermer(revenir = true) {
+    clearTimeout(tirage);
+    chargement?.abort();
+    if (!volet.open) return;
+    volet.close();
+    // Le dossier refermé garde un liseré qui s'efface : on retrouve sa place même à la souris, sans anneau de focus.
+    const ouvert = grille.querySelector("[data-ouvert]");
+    ouvert?.removeAttribute("data-ouvert");
+    if (ouvert) marquer(ouvert);
+    if (revenir && history.state?.volet) history.back();
+    origine?.focus({ preventScroll: true });
   }
   // Étiquette ou dossier cliqués (fiche ou volet) : on filtre le tableau sur place, sans changer de page.
   function filtrerDepuisLien(a) {
-    const m = a.pathname.match(/^\/(tags|categories)\/([^/]+)\/?$/);
+    const m = a.pathname.match(/^\/(tags|category)\/([^/]+)\/?$/);
     if (!m) return false;
     if (m[1] === "tags") {
       const b = document.querySelector(`.filtres-tags [data-tag="${m[2]}"]`);
@@ -198,9 +271,10 @@
   document.addEventListener("click", (e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     const a = e.target.closest("a");
-    if (a && a.matches(".fiche-titre a, .voisins a")) {
+    if (a && a.matches(".fiche-titre a, .fiche-image, .voisins a")) {
       e.preventDefault();
-      origine = a;
+      origine = [...fiches].map((f) => f.querySelector(".fiche-titre a")).find((lien) => lien.href === a.href) || a;
+      volet.toggleAttribute("data-clavier", e.detail === 0);
       ouvrir(a.href);
       return;
     }
@@ -209,14 +283,26 @@
       fermer();
       return;
     }
-    // Clic en dehors du volet : on le ferme.
-    if (!volet.hidden && !volet.contains(e.target)) fermer();
+
   });
   voletFermer.addEventListener("click", () => fermer());
+  volet.addEventListener("cancel", (e) => { e.preventDefault(); fermer(); });
+  volet.addEventListener("click", (e) => {
+    if (e.target !== volet) return;
+    const r = volet.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) fermer();
+  });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") return fermer();
-    if (e.key === "/" && !e.target.closest?.("input, textarea") && volet.hidden) { e.preventDefault(); champ.focus(); champ.select(); return; }
-    if (volet.hidden || !origine || e.target.closest?.("input")) return;
+    if (e.key === "Escape" && !volet.open) {
+      clearTimeout(tirage);
+      grille.querySelector("[data-ouvert]")?.removeAttribute("data-ouvert");
+      if (reglages.open) { reglages.open = false; reglages.querySelector("summary").focus(); }
+      else if (!large.matches && explorer.open) { explorer.open = false; explorer.querySelector("summary").focus(); }
+      else if (etiqPanel && !etiqPanel.hidden) { etiqPanel.hidden = true; etiqToggle.setAttribute("aria-expanded", "false"); etiqToggle.focus(); }
+      return;
+    }
+    if (e.key === "/" && !e.target.closest?.("input, textarea") && !volet.open) { e.preventDefault(); champ.focus(); champ.select(); return; }
+    if (!volet.open || !origine || e.target.closest?.("input")) return;
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     const liens = [...fiches].filter((f) => !f.hidden).map((f) => f.querySelector(".fiche-titre a"));
     const i = liens.indexOf(origine);
@@ -224,25 +310,35 @@
     if (!suivant) return;
     e.preventDefault();
     origine = suivant;
-    suivant.closest(".fiche").scrollIntoView({ block: "center", behavior: "smooth" });
+    suivant.closest(".fiche").scrollIntoView({ block: "center", behavior: "instant" });
+    volet.setAttribute("data-clavier", "");
     ouvrir(suivant.href);
   });
-  window.addEventListener("popstate", (e) => (e.state?.volet ? ouvrir(e.state.volet, false) : fermer(false)));
+  window.addEventListener("popstate", (e) => {
+    if (e.state?.volet) {
+      origine = [...fiches].map((f) => f.querySelector(".fiche-titre a")).find((a) => a.href === e.state.volet) || origine;
+      ouvrir(e.state.volet, false);
+    } else fermer(false);
+  });
 
-  // Un signet visible au hasard.
+  // Un signet visible au hasard : on le montre d'abord (liseré, défilement), la feuille suit un demi-temps plus tard.
   document.getElementById("hasard").addEventListener("click", (e) => {
-    e.currentTarget.classList.remove("lance");
-    void e.currentTarget.offsetWidth;
-    e.currentTarget.classList.add("lance");
+    clearTimeout(tirage);
     const v = [...fiches].filter((f) => !f.hidden);
     const f = v[Math.floor(Math.random() * v.length)];
     if (!f) return;
-    f.scrollIntoView({ block: "center" });
-    f.querySelector(".fiche-titre a")?.focus({ preventScroll: true });
-    // Le dossier tiré se signale une seconde, souris ou clavier.
-    for (const x of grille.querySelectorAll("[data-tire]")) x.removeAttribute("data-tire");
-    f.setAttribute("data-tire", "");
-    setTimeout(() => f.removeAttribute("data-tire"), 1400);
+    if (!large.matches) explorer.open = false;
+    reglages.open = false;
+    f.scrollIntoView({ block: "center", behavior: mouvementReduit.matches ? "instant" : "smooth" });
+    origine = f.querySelector(".fiche-titre a");
+    origine.focus({ preventScroll: true });
+    grille.querySelector("[data-ouvert]")?.removeAttribute("data-ouvert");
+    f.setAttribute("data-ouvert", ""); // onglet encré tout de suite, sans fondu, la feuille suit
+    volet.toggleAttribute("data-clavier", e.detail === 0);
+    tirage = setTimeout(() => {
+      f.scrollIntoView({ block: "center", behavior: "instant" }); // au cas où le défilement doux n'a pas fini
+      ouvrir(origine.href);
+    }, mouvementReduit.matches ? 0 : 550);
   });
 
   function majVue(vue) {
@@ -282,7 +378,6 @@
       const okQ = q.every((mot) => texte.includes(mot));
       f.hidden = !(okCat && okTags && okQ && okAnnee);
       if (!f.hidden) {
-        f.style.setProperty("--i", Math.min(visibles, 12));
         visibles++;
         for (const t of tags) restants.set(t, (restants.get(t) ?? 0) + 1);
       }
@@ -305,9 +400,16 @@
           ? "1 signet"
           : `${visibles} signets`;
     vide.hidden = visibles !== 0;
-    grille.setAttribute("data-anime", "");
-    clearTimeout(appliquer.t);
-    appliquer.t = setTimeout(() => grille.removeAttribute("data-anime"), 700);
+    document.getElementById("hasard").disabled = visibles === 0;
+    const actifs = [
+      catActif && [...boutonsCat].find((b) => b.dataset.cat === catActif)?.textContent,
+      anneeActive,
+      ...tagsActifs,
+      champ.value.trim() && `« ${champ.value.trim()} »`
+    ].filter(Boolean);
+    document.getElementById("filtres-actifs").hidden = actifs.length === 0;
+    document.getElementById("filtres-resume").textContent = actifs.join(" / ");
+    document.getElementById("filtres-count").textContent = actifs.length ? ` (${actifs.length})` : "";
   }
 
   function majCats() {
@@ -347,7 +449,7 @@
       appliquer();
     });
 
-  reset.addEventListener("click", () => {
+  function reinitialiser() {
     champ.value = "";
     catActif = "";
     anneeActive = "";
@@ -358,7 +460,9 @@
     if (etiqCount) etiqCount.textContent = nbTags;
     appliquer();
     champ.focus();
-  });
+  }
+  reset.addEventListener("click", reinitialiser);
+  document.getElementById("effacer").addEventListener("click", reinitialiser);
 </script>
 {% else %}
 <p>

@@ -16,7 +16,7 @@
 {% set paras = page.content | split(pat="</p>") %}
 {# Titres en capitales ramenés en bas de casse, titres longs marqués pour être réduits et coupés. #}
 {% set titre = page.title %}
-{% if titre | length > 12 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
+{% if titre | length > 3 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
 {% set premier = paras | first | striptags | trim %}
 <li class="fiche"{% if titre | length > 60 %} data-long{% endif %}
   data-categorie="{{ cats | join(sep=" ") }}"
@@ -28,9 +28,9 @@
     {% if cat_slug %}<span class="visually-hidden">, catégorie {{ labels[cat_slug] | default(value=cat_slug) }}</span>{% endif %}
   </p>
   {% if page.extra.image %}
-    {% set vignette = resize_image(path=page.extra.image, width=256, height=256, op="fill", format="webp", quality=75) %}
+    {% set vignette = resize_image(path=page.extra.image, width=640, height=400, op="fill", format="webp", quality=75) %}
     <a class="fiche-image" href="{{ page.permalink }}" tabindex="-1" aria-hidden="true">
-      <img src="{{ vignette.url }}" alt="" width="256" height="256" loading="lazy">
+      <img src="{{ vignette.url }}" alt="" width="640" height="400" decoding="async" loading="lazy">
     </a>{% endif %}
   <h{{ heading_level | default(value=3) }} class="fiche-titre">
     <a href="{{ page.permalink }}">{{ titre }}</a>
