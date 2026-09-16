@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --text: #1a1a18;
+  --text-muted: #6b6a65;
+  --text-faint: #767570;
+  --col-bg: #eeecea;
+  --tag-bg: #e8e6e1;
+  --tag-text: #4a4945;
+  --font: 'Berkeley Mono', 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --status-not_started: #c8c4bc;
+  --status-in_progress: #4a90d9;
+  --status-blocked: #d9604a;
+  --status-done: #5aaa72;
+
+  /* Accents de texte sur fond teinté : ≥ 4,5:1 sur --surface dans chaque thème. */
+  --blue: #2a68b3;
+  --red: #b8432e;
+  --green: #2f7d4a;
+  --orange: #a8501f;
+  --teal: #1f6f74;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #18181a;
+    --surface: #232325;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.14);
+    --text: #e8e6e0;
+    --text-muted: #8e8d88;
+    --text-faint: #8c8b86;
+    --col-bg: #1e1e20;
+    --tag-bg: #2e2e30;
+    --tag-text: #b0afa8;
+
+    --blue: #7fb3f0;
+    --red: #f08a72;
+    --green: #7cc894;
+    --orange: #f0a070;
+    --teal: #6fc4c8;
+  }
+}
+
+main { display: flex; flex-direction: column; flex: 1; }
+
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--surface);
+}
+
+header .meta {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-faint);
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  white-space: nowrap;
+}
+header h1 { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+
+header .error { color: var(--status-blocked); font-size: 12px; }
+header .error:empty { display: none; }
+header h1::after { content: '·'; margin-left: 8px; color: var(--text-faint); font-weight: 400; }
+
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 0;
+  min-width: 0;
+}
+
+/* « Mon état » est la question du produit, « Affichage » un réglage : deux poids. */
+.filters legend {
+  float: left; /* rend la legend inline dans le flex du fieldset */
+  font-size: 12px;
+  margin-right: 4px;
+}
+.filters.state {
+  padding: 6px 10px 6px 12px;
+  background: var(--col-bg);
+  border-radius: 6px;
+}
+.filters.state legend { color: var(--text); font-weight: 600; }
+.filters.view legend { color: var(--text-faint); }
+.filters.view label { color: var(--text-faint); }
+.filters.view select { background: transparent; }
+
+.filter { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+
+.filters label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.filters select {
+  font-family: var(--font);
+  font-size: 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.filters select:focus-visible,
+.card:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--status-in_progress);
+  outline-offset: 2px;
+}
+
+#count { }
+
+.board {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  flex: 1;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .board { flex-wrap: wrap; }
+  .column { flex-basis: calc(50% - 6px); }
+}
+
+@media (max-width: 520px) {
+  .column { flex-basis: 100%; }
+}
+
+/* Une colonne vide, ou repliée à la main, devient un rail vertical : la place va aux autres. */
+.column.collapsed, .column.empty:not(.expanded) { flex: 0 0 36px; min-height: 140px; max-width: none; }
+.column.collapsed .column-header, .column.empty:not(.expanded) .column-header { flex-direction: column; padding: 12px 0; border-bottom: 0; height: 100%; }
+.column.collapsed .column-header h2, .column.empty:not(.expanded) .column-header h2 { writing-mode: vertical-rl; flex: 0; white-space: nowrap; }
+.column.collapsed .cards, .column.empty:not(.expanded) .cards { display: none; }
+.column.collapsed .col-add, .column.empty:not(.expanded) .col-add,
+.column.collapsed .col-new, .column.empty:not(.expanded) .col-new { display: none; }
+@media (max-width: 520px) {
+  .column.collapsed, .column.empty:not(.expanded) { flex-basis: 100%; min-height: 0; }
+  .column.collapsed .column-header, .column.empty:not(.expanded) .column-header { flex-direction: row; padding: 10px 12px 8px; }
+  .column.collapsed .column-header h2, .column.empty:not(.expanded) .column-header h2 { writing-mode: horizontal-tb; flex: 1; }
+}
+
+.col-toggle {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.col-toggle:hover { color: var(--text); }
+.col-toggle:focus-visible { outline: 2px solid var(--status-in_progress); outline-offset: 2px; }
+
+.col-add {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+.col-add:hover { color: var(--text); background: var(--border); }
+.col-add:focus-visible { outline: 2px solid var(--status-in_progress); }
+.col-new { padding: 8px 8px 0; }
+.col-new input {
+  font-family: var(--font);
+  font-size: 12px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+}
+.col-new input:focus-visible { outline: 2px solid var(--status-in_progress); outline-offset: 1px; }
+.col-new .error { display: block; color: var(--status-blocked); font-size: 11px; padding-top: 4px; }
+.col-new .error:empty { display: none; }
+
+.column {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 480px;
+  background: var(--col-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.column.drop { border-color: var(--status-in_progress); }
+.card[draggable] { cursor: grab; }
+.card.dragging { opacity: 0.4; }
+
+.column-header {
+  padding: 10px 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.column-header h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.col-count {
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--border);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.cards {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 40px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.1s;
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+}
+
+.tag.dir {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+}
+
+.tag.assign  { background: rgba(74, 144, 217, 0.14); color: var(--blue); }
+.tag.due     { background: rgba(217, 96, 74, 0.12); color: var(--red); }
+.tag.context { background: rgba(31, 111, 116, 0.14); color: var(--teal); }
+.tag.status  { background: transparent; color: var(--text-muted); }
+select.tag.status { font-family: var(--font); border: 1px solid var(--border-strong); cursor: pointer; }
+
+.scores {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.score-badge .score-label { font-weight: 400; }
+
+.score-badge.energy   { background: rgba(224, 123, 84, 0.14); color: var(--orange); }
+.score-badge.pleasure { background: rgba(74, 144, 217, 0.14); color: var(--blue); }
+.score-badge.impact   { background: rgba(90, 170, 114, 0.14); color: var(--green); }
+.score-badge.ratio    { color: var(--text); font-size: 13px; padding-left: 2px; }
+.score-badge.unscored { background: transparent; color: var(--text-muted); font-weight: 400; padding-left: 0; }
+
+.score-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.score-badge + .score-meta { margin-left: auto; }
+
+.cards-sep {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 8px 4px 2px;
+  border-top: 1px solid var(--border-strong);
+  margin-top: 4px;
+}
+.cards-sep:first-child { border-top: 0; margin-top: 0; padding-top: 2px; }
+
+.empty-board {
+  margin: 24px 16px 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  color: var(--text-muted);
+}
+
+.filters select:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.dialog-foot { flex-wrap: wrap; }
+.dialog-foot .error { color: var(--status-blocked); font-size: 12px; flex-basis: 100%; order: 1; }
+.dialog-head .scores { margin: 2px 0 0; flex-basis: 100%; }
+.empty-board .btn { margin-left: 8px; }
+.dialog-foot .error:empty { display: none; }
+
+dialog#task-dialog {
+  width: min(640px, 92vw);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+dialog#task-dialog::backdrop { background: rgba(0,0,0,0.45); }
+
+.dialog-head {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog-head h2 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.dialog-body {
+  padding: 16px 18px;
+  overflow-y: auto;
+  max-height: 55vh;
+}
+
+.dialog-body h3 { font-size: 13px; font-weight: 600; margin: 14px 0 4px; }
+.dialog-body h3:first-child { margin-top: 0; }
+.dialog-body p { margin: 0 0 8px; }
+.dialog-body ul { margin: 0 0 8px; padding-left: 18px; }
+.dialog-body li.check { list-style: none; margin-left: -18px; }
+.dialog-body pre {
+  background: var(--tag-bg);
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin: 0 0 8px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.dialog-body pre code { background: none; padding: 0; }
+
+.dialog-body code {
+  background: var(--tag-bg);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.dialog-body .empty { color: var(--text-faint); }
+
+.dialog-foot {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dialog-foot .path {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn {
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:hover { border-color: var(--text-muted); }
+.btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.btn[aria-pressed="true"] { background: var(--text); color: var(--surface); border-color: var(--text); }
+
+.wikilink { color: var(--status-in_progress); text-decoration: none; border-bottom: 1px dotted currentColor; cursor: pointer; }
+.dialog-body .links { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); color: var(--text-muted); }
+.dialog-body .links a { margin-right: 10px; }
+
+#graph { display: block; width: 100%; flex: 1; min-height: 400px; }
+#graph line { stroke: var(--border-strong); }
+#graph g { cursor: pointer; outline: none; }
+#graph g:hover circle, #graph g:focus-visible circle { stroke: var(--status-in_progress); stroke-width: 2; }
+#graph text { font-size: 11px; fill: var(--text-muted); pointer-events: none; }
+#graph .empty { fill: var(--text-muted); font-size: 13px; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <fieldset class="filters state">
+    <legend>Mon état</legend>
+    <span class="filter"><label for="f-energy">Énergie max</label>
+    <select id="f-energy">
+      <option value="">Toutes</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="8">8</option>
+      <option value="13">13</option>
+      <option value="21">21</option>
+    </select></span>
+
+    <span class="filter"><label for="f-context">Contexte</label>
+    <select id="f-context">
+      <option value="">Tous</option>
+      <option value="shallow">shallow</option>
+    </select></span>
+
+    <span class="filter"><label for="f-assign">Assigné</label>
+    <select id="f-assign">
+      <option value="">Tous</option>
+      
+    </select></span>
+  </fieldset>
+  <fieldset class="filters view">
+    <legend>Affichage</legend>
+    <span class="filter"><label for="f-dir">Dossier</label>
+    <select id="f-dir">
+      <option value="">Tous</option>
+      <option value="tasks">tasks</option>
+    </select></span>
+
+    <span class="filter"><label for="f-scope">Scope</label>
+    <select id="f-scope">
+      <option value="">Tous</option>
+      
+    </select></span>
+
+    <span class="filter"><label for="f-sort">Tri</label>
+    <select id="f-sort">
+      <option value="ratio">Ratio</option>
+      <option value="impact">Impact</option>
+      <option value="none">Fichier</option>
+    </select></span>
+
+    <button class="btn" id="f-view" aria-pressed="false">Graphe</button>
+    <button class="btn" id="f-reset" hidden>Réinitialiser</button>
+  </fieldset>
+  <span class="error" id="notice" role="alert"></span>
+  <div class="meta"><h1>Kanban</h1><span id="count" aria-live="polite"></span></div>
+</header>
+
+<main>
+<svg id="graph" class="hidden" aria-label="Graphe des liens entre tâches"></svg>
+
+<p class="empty-board" id="empty" hidden>Aucune tâche ne passe ces filtres. <button class="btn" id="empty-reset">Réinitialiser</button></p>
+
+<div class="board" id="board">
+  
+  <section class="column" data-col="not_started" aria-labelledby="h-not_started">
+    <div class="column-header">
+      <span class="status-dot" style="background: var(--status-not_started)" aria-hidden="true"></span>
+      <h2 id="h-not_started"><button class="col-toggle" aria-expanded="true" aria-controls="col-not_started">À faire</button></h2>
+      <span class="col-count" id="count-not_started">0</span>
+      <button class="col-add" type="button" title="Nouvelle tâche" aria-label="Nouvelle tâche dans À faire">+</button>
+    </div>
+    <form class="col-new" hidden>
+      <input type="text" placeholder="Titre, Entrée pour créer" required autocomplete="off" aria-label="Titre de la nouvelle tâche">
+      <span class="error" role="alert"></span>
+    </form>
+    <div class="cards" id="col-not_started"></div>
+  </section>
+  <section class="column" data-col="in_progress" aria-labelledby="h-in_progress">
+    <div class="column-header">
+      <span class="status-dot" style="background: var(--status-in_progress)" aria-hidden="true"></span>
+      <h2 id="h-in_progress"><button class="col-toggle" aria-expanded="true" aria-controls="col-in_progress">En cours</button></h2>
+      <span class="col-count" id="count-in_progress">0</span>
+      <button class="col-add" type="button" title="Nouvelle tâche" aria-label="Nouvelle tâche dans En cours">+</button>
+    </div>
+    <form class="col-new" hidden>
+      <input type="text" placeholder="Titre, Entrée pour créer" required autocomplete="off" aria-label="Titre de la nouvelle tâche">
+      <span class="error" role="alert"></span>
+    </form>
+    <div class="cards" id="col-in_progress"></div>
+  </section>
+  <section class="column" data-col="blocked" aria-labelledby="h-blocked">
+    <div class="column-header">
+      <span class="status-dot" style="background: var(--status-blocked)" aria-hidden="true"></span>
+      <h2 id="h-blocked"><button class="col-toggle" aria-expanded="true" aria-controls="col-blocked">Bloqué</button></h2>
+      <span class="col-count" id="count-blocked">0</span>
+      <button class="col-add" type="button" title="Nouvelle tâche" aria-label="Nouvelle tâche dans Bloqué">+</button>
+    </div>
+    <form class="col-new" hidden>
+      <input type="text" placeholder="Titre, Entrée pour créer" required autocomplete="off" aria-label="Titre de la nouvelle tâche">
+      <span class="error" role="alert"></span>
+    </form>
+    <div class="cards" id="col-blocked"></div>
+  </section>
+  <section class="column" data-col="done" aria-labelledby="h-done">
+    <div class="column-header">
+      <span class="status-dot" style="background: var(--status-done)" aria-hidden="true"></span>
+      <h2 id="h-done"><button class="col-toggle" aria-expanded="true" aria-controls="col-done">Terminé</button></h2>
+      <span class="col-count" id="count-done">0</span>
+      <button class="col-add" type="button" title="Nouvelle tâche" aria-label="Nouvelle tâche dans Terminé">+</button>
+    </div>
+    <form class="col-new" hidden>
+      <input type="text" placeholder="Titre, Entrée pour créer" required autocomplete="off" aria-label="Titre de la nouvelle tâche">
+      <span class="error" role="alert"></span>
+    </form>
+    <div class="cards" id="col-done"></div>
+  </section>
+</div>
+</main>
+
+<dialog id="task-dialog" aria-labelledby="dlg-title">
+  <div class="dialog-head">
+    <h2 id="dlg-title"></h2>
+    <div class="card-meta" id="dlg-meta"></div>
+  </div>
+  <div class="dialog-body" id="dlg-body"></div>
+  <div class="dialog-foot">
+    <span class="path" id="dlg-path"></span>
+    <button class="btn" id="dlg-back" hidden>← Retour</button>
+    <span id="dlg-links"></span>
+    <span class="error" id="dlg-error" role="alert"></span>
+    <button class="btn" id="dlg-close">Fermer</button>
+    <button class="btn primary" id="dlg-open" autofocus>Ouvrir dans l'éditeur</button>
+  </div>
+</dialog>
+
+<script>
+const TASKS = [{"filename":"add-rss-feed.md","title":"Add RSS feed","status":"not_started","context":"shallow","type":["feature"],"body":"## Tasks\n\n- [ ] Look at ZOLA doc for RSS feed features\n- [ ] Add rss btn on the frontend","_dir":"tasks","_path":"/Users/theogoedert/Documents/Webworks/5-ludique-dev/besace/tasks/add-rss-feed.md","links":{}}];
+
+const COLUMNS = [{"id":"not_started","label":"À faire"},{"id":"in_progress","label":"En cours"},{"id":"blocked","label":"Bloqué"},{"id":"done","label":"Terminé"}];
+
+const SERVER_URL = "http://localhost:7878";
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Ratio (plaisir + impact) / énergie — plus c'est haut, plus la tâche rend par unité d'effort.
+function ratio(task) {
+  const e = parseInt(task.energy), p = parseInt(task.pleasure), i = parseInt(task.impact);
+  if (!e || isNaN(p) || isNaN(i)) return null;
+  return Math.round((p + i) / e * 10) / 10;
+}
+
+function countTasks(body) {
+  if (!body) return { total: 0, done: 0 };
+  const all = (body.match(/- \[[ x]\]/g) || []).length;
+  const done = (body.match(/- \[x\]/g) || []).length;
+  return { total: all, done };
+}
+
+// Le tag dossier est redondant quand le filtre Dossier est actif, et quand il n'y a qu'un dossier.
+const ONE_DIR = new Set(TASKS.map(t => t._dir)).size < 2;
+let HIDE_DIR = ONE_DIR;
+
+function tagsHtml(task) {
+  const tag = (v, cls) => `<span class="tag${cls ? ' ' + cls : ''}">${esc(v)}</span>`;
+  const scopeTags = Array.isArray(task.scope) ? task.scope.map(s => tag(s)).join('') : '';
+  const typeTags = Array.isArray(task.type) ? task.type.map(t => tag(t)).join('') : '';
+  return (task._dir && !HIDE_DIR ? tag(task._dir, 'dir') : '')
+    + (task.assign ? tag(task.assign, 'assign') : '')
+    + (task.context ? tag(task.context, 'context') : '')
+    + scopeTags + typeTags
+    + (task.due ? tag('due ' + task.due, 'due') : '');
+}
+
+function scored(task) {
+  return Boolean(task.energy || task.pleasure || task.impact);
+}
+
+// Une tâche sans E/P/I est incomplète : le badge le dit au lieu de laisser la ligne vide.
+function scoresHtml(task) {
+  const r = ratio(task);
+  const { total, done } = countTasks(task.body);
+  return `
+    <div class="scores">
+      ${!scored(task) ? `<span class="score-badge unscored" title="Ajouter energy, pleasure et impact dans la frontmatter">non scorée</span>` : ''}
+      ${task.energy   ? `<span class="score-badge energy" title="Énergie"><span class="score-label">E</span>${esc(task.energy)}</span>` : ''}
+      ${task.pleasure ? `<span class="score-badge pleasure" title="Plaisir"><span class="score-label">P</span>${esc(task.pleasure)}</span>` : ''}
+      ${task.impact   ? `<span class="score-badge impact" title="Impact"><span class="score-label">I</span>${esc(task.impact)}</span>` : ''}
+      ${r !== null    ? `<span class="score-badge ratio" title="(plaisir + impact) / énergie">×${r}</span>` : ''}
+      ${total > 1     ? `<span class="score-meta">${done}/${total}</span>` : ''}
+      ${task.duration ? `<span class="score-meta">${esc(task.duration)}</span>` : ''}
+    </div>`;
+}
+
+function renderCard(task, index) {
+  return `
+  <div class="card" data-i="${index}" role="button" tabindex="0" draggable="true" aria-labelledby="card-title-${index}">
+    ${scoresHtml(task)}
+    <div class="card-title" id="card-title-${index}">${esc(task.title || task.filename)}</div>
+    <div class="card-meta">${tagsHtml(task)}</div>
+  </div>`;
+}
+
+const FILTER_IDS = ['f-assign', 'f-scope', 'f-dir', 'f-context', 'f-energy'];
+let FILTERED = TASKS;
+const filterValue = id => document.getElementById(id).value;
+
+function render() {
+  const assign  = filterValue('f-assign');
+  const scope   = filterValue('f-scope').toLowerCase();
+  const dir     = filterValue('f-dir');
+  const context = filterValue('f-context');
+  const energy  = parseInt(filterValue('f-energy')) || 0;
+  const sortBy  = filterValue('f-sort');
+  HIDE_DIR = ONE_DIR || Boolean(dir);
+
+  COLUMNS.forEach(col => {
+    document.getElementById(`col-${col.id}`).innerHTML = '';
+  });
+
+  const filtered = TASKS.filter(task => {
+    if (assign  && task.assign !== assign) return false;
+    if (scope   && !(Array.isArray(task.scope) && task.scope.some(s => s.toLowerCase() === scope))) return false;
+    if (dir     && task._dir !== dir) return false;
+    if (context && task.context !== context) return false;
+    if (energy  && !(parseInt(task.energy) <= energy)) return false; // sans énergie = hors plafond
+    return true;
+  });
+
+  if (sortBy === 'ratio') {
+    filtered.sort((a, b) => (ratio(b) ?? -Infinity) - (ratio(a) ?? -Infinity));
+  } else if (sortBy === 'impact') {
+    filtered.sort((a, b) => (parseInt(b.impact) || 0) - (parseInt(a.impact) || 0));
+  }
+
+  // Les non scorées passent sous un séparateur quand la colonne mélange les deux,
+  // et toujours quand un tri par score ou un plafond d'énergie est actif.
+  const splitUnscored = sortBy !== 'none' || energy > 0;
+  COLUMNS.forEach(col => {
+    const inCol = filtered.filter(t => t.status === col.id);
+    const [withScores, without] = [inCol.filter(scored), inCol.filter(t => !scored(t))];
+    const ordered = splitUnscored ? [...withScores, ...without] : inCol;
+    const el = document.getElementById(`col-${col.id}`);
+    ordered.forEach(task => {
+      if (splitUnscored && withScores.length && task === without[0]) {
+        el.insertAdjacentHTML('beforeend', `<div class="cards-sep">non scorées (${without.length})</div>`);
+      }
+      el.insertAdjacentHTML('beforeend', renderCard(task, TASKS.indexOf(task)));
+    });
+    document.getElementById(`count-${col.id}`).textContent = inCol.length;
+    el.closest('.column').classList.toggle('empty', inCol.length === 0);
+  });
+  applyCols();
+
+  const visible = filtered.filter(t => COLUMNS.some(c => c.id === t.status)).length;
+  const hidden = energy ? TASKS.filter(t => !scored(t)).length : 0;
+  document.getElementById('count').textContent = `${visible} tâche${visible !== 1 ? 's' : ''}`
+    + (hidden ? `, ${hidden} non scorée${hidden !== 1 ? 's' : ''} masquée${hidden !== 1 ? 's' : ''}` : '');
+
+  const active = FILTER_IDS.some(id => filterValue(id));
+  document.getElementById('f-reset').hidden = !active;
+  document.getElementById('empty').hidden = !(active && visible === 0);
+
+  FILTERED = filtered;
+  if (document.getElementById('f-view').getAttribute('aria-pressed') === 'true') renderGraph();
+  saveState();
+  syncUrl();
+}
+
+// Les filtres vivent aussi dans l'URL : un favori « mon board du soir », un lien à envoyer.
+// L'URL prime sur le localStorage au chargement.
+const param = id => id.slice(2); // f-assign → assign
+function syncUrl() {
+  const url = new URL(location.href);
+  [...FILTER_IDS, 'f-sort'].forEach(id => {
+    const v = filterValue(id);
+    if (v && !(id === 'f-sort' && v === 'ratio')) url.searchParams.set(param(id), v); else url.searchParams.delete(param(id));
+  });
+  history.replaceState(null, '', url);
+}
+function loadUrl() {
+  const q = new URLSearchParams(location.search);
+  [...FILTER_IDS, 'f-sort'].forEach(id => {
+    const el = document.getElementById(id), v = q.get(param(id));
+    if (v !== null && !el.disabled && [...el.options].some(o => o.value === v)) el.value = v;
+  });
+}
+
+// « Mon état » survit à la régénération du board : Théo ne re-sélectionne pas Théo chaque matin.
+const STATE_IDS = ['f-energy', 'f-context', 'f-assign'];
+const stateKey = () => 'kandepo:' + document.title + ':state';
+function saveState() {
+  try { localStorage.setItem(stateKey(), JSON.stringify(Object.fromEntries(STATE_IDS.map(id => [id, filterValue(id)])))); } catch {}
+}
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(stateKey()) || '{}');
+    STATE_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (saved[id] && !el.disabled && [...el.options].some(o => o.value === saved[id])) el.value = saved[id];
+    });
+  } catch {}
+}
+
+// Repli manuel des colonnes, mémorisé par projet. Une colonne vide se replie seule sauf si on l'a dépliée.
+const colsKey = () => 'kandepo:' + document.title + ':cols';
+function applyCols() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(colsKey()) || '{}'); } catch {}
+  document.querySelectorAll('.column').forEach(col => {
+    const state = saved[col.dataset.col];
+    col.classList.toggle('collapsed', state === 'collapsed');
+    col.classList.toggle('expanded', state === 'expanded');
+    const rail = getComputedStyle(col.querySelector('.cards')).display === 'none';
+    col.querySelector('.col-toggle').setAttribute('aria-expanded', String(!rail));
+  });
+}
+// Un filtre sans valeur possible sur ces données est désactivé, pas laissé muet.
+function disableEmptyFilters() {
+  const off = (id, why) => { const el = document.getElementById(id); el.disabled = true; el.title = why; };
+  ['f-assign', 'f-scope', 'f-dir', 'f-context'].forEach(id => {
+    if (document.getElementById(id).options.length < 2) off(id, 'Aucune tâche ne renseigne ce champ');
+  });
+  if (!TASKS.some(t => parseInt(t.energy))) off('f-energy', 'Aucune tâche n\'a d\'énergie renseignée');
+  if (ONE_DIR) document.getElementById('f-dir').closest('.filter').hidden = true;
+}
+
+function resetFilters() {
+  FILTER_IDS.forEach(id => { document.getElementById(id).value = ''; });
+  render();
+}
+
+// Rendu markdown minimal : titres, listes, cases à cocher, code inline, gras.
+function mdToHtml(src, links = {}) {
+  // Les clés du map sont brutes, le texte est déjà échappé : on échappe les clés.
+  const L = Object.fromEntries(Object.entries(links).map(([k, v]) => [esc(k), v]));
+  const inline = t => esc(t)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[\[([^\]]+)\]\]/g, (m, n) => L[n] !== undefined ? `<a class="wikilink" data-i="${L[n]}" tabindex="0">${n}</a>` : m);
+  const out = [];
+  let inList = false;
+  const closeList = () => { if (inList) { out.push('</ul>'); inList = false; } };
+  const openList = () => { if (!inList) { out.push('<ul>'); inList = true; } };
+
+  let fence = null;
+  for (const line of src.split('\n')) {
+    if (line.trim().startsWith('```')) {
+      if (fence) { out.push(`<pre><code>${esc(fence.join('\n'))}</code></pre>`); fence = null; }
+      else { closeList(); fence = []; }
+      continue;
+    }
+    if (fence) { fence.push(line); continue; }
+    const heading = line.match(/^(#{1,6})\s+(.*)/);
+    const check = line.match(/^\s*[-*]\s+\[([ xX])\]\s+(.*)/);
+    const item = line.match(/^\s*[-*]\s+(.*)/);
+    if (heading) { closeList(); out.push(`<h3>${inline(heading[2])}</h3>`); }
+    else if (check) { openList(); out.push(`<li class="check">${check[1] === ' ' ? '☐' : '☑'} ${inline(check[2])}</li>`); }
+    else if (item) { openList(); out.push(`<li>${inline(item[1])}</li>`); }
+    else if (line.trim() === '') closeList();
+    else { closeList(); out.push(`<p>${inline(line)}</p>`); }
+  }
+  closeList();
+  if (fence) out.push(`<pre><code>${esc(fence.join('\n'))}</code></pre>`);
+  return out.join('\n');
+}
+
+const dialog = document.getElementById('task-dialog');
+let currentPath = null;
+let history = []; // fiches ouvertes par wikilink, pour « Retour »
+
+// Le serveur ne tourne que pendant `npx kandepo` : son absence se dit, elle ne se tait pas.
+// Servi par lui, le board parle à sa propre origine. Ouvert en file://, il ne peut rien écrire.
+const API = location.protocol.startsWith('http') ? location.origin : SERVER_URL;
+function api(route, body) {
+  return fetch(API + route, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .catch(() => { throw new Error(location.protocol === 'file:'
+      ? `Ce fichier est ouvert en file://, ouvre ${SERVER_URL} à la place (lance \`npx kandepo\`).`
+      : `Serveur kandepo injoignable sur ${API}, lance \`npx kandepo\` puis recharge.`); })
+    .then(async r => { if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || `Erreur ${r.status}`); });
+}
+
+function setStatus(i, status) {
+  if (!TASKS[i] || TASKS[i].status === status) return;
+  api('/status', { path: TASKS[i]._path, status })
+    .then(() => location.reload())
+    .catch(e => { document.getElementById('notice').textContent = e.message; });
+}
+
+function openTask(i, { push = false } = {}) {
+  const task = TASKS[i];
+  if (!task) return;
+  if (!push) history = [];
+  currentPath = task._path || null;
+  document.getElementById('dlg-back').hidden = !history.length;
+
+  document.getElementById('dlg-title').textContent = task.title || task.filename;
+  const status = `<select class="tag status" id="dlg-status" aria-label="Statut">${COLUMNS.map(c =>
+    `<option value="${c.id}"${c.id === task.status ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}</select>`;
+  document.getElementById('dlg-meta').innerHTML = status + tagsHtml(task) + scoresHtml(task);
+  document.getElementById('dlg-status').addEventListener('change', e => setStatus(i, e.target.value));
+  const back = TASKS.map((t, j) => Object.values(t.links).includes(i) ? j : -1).filter(j => j >= 0)
+    .map(j => `<a class="wikilink" data-i="${j}" tabindex="0">${esc(TASKS[j].title || TASKS[j].filename)}</a>`).join('');
+  document.getElementById('dlg-body').innerHTML = (task.body
+    ? mdToHtml(task.body, task.links)
+    : '<p class="empty">Pas de description.</p>')
+    + (back ? `<div class="links">← ${back}</div>` : '');
+  document.getElementById('dlg-path').textContent = task.filename;
+  document.getElementById('dlg-error').textContent = '';
+
+  // Seuls http(s) : une frontmatter mal remplie ne doit pas injecter de javascript:.
+  const link = (url, label) => /^https?:\/\//.test(url || '')
+    ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>` : '';
+  document.getElementById('dlg-links').innerHTML = link(task.issue_url, 'Issue') + link(task.notion_url, 'Notion');
+
+  if (!dialog.open) dialog.showModal();
+  document.getElementById('dlg-open').focus();
+}
+
+function followLink(a) {
+  history.push(TASKS.findIndex(t => t._path === currentPath));
+  openTask(Number(a.dataset.i), { push: true });
+}
+
+// Clic et clavier sur les cartes : Enter/Espace ouvre, flèches déplacent le focus
+// (haut/bas dans la colonne, gauche/droite vers la colonne voisine, même rang).
+const board = document.getElementById('board');
+board.addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if (card) openTask(Number(card.dataset.i));
+});
+board.addEventListener('click', e => {
+  const btn = e.target.closest('.col-toggle');
+  if (!btn) return;
+  const col = btn.closest('.column');
+  const open = btn.getAttribute('aria-expanded') === 'true';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(colsKey()) || '{}'); } catch {}
+  saved[col.dataset.col] = open ? 'collapsed' : 'expanded';
+  try { localStorage.setItem(colsKey(), JSON.stringify(saved)); } catch {}
+  applyCols();
+});
+dialog.addEventListener('click', e => {
+  const a = e.target.closest('.wikilink');
+  if (a) followLink(a);
+});
+dialog.addEventListener('keydown', e => {
+  const a = e.target.closest('.wikilink');
+  if (a && e.key === 'Enter') { e.preventDefault(); followLink(a); }
+});
+document.getElementById('dlg-back').addEventListener('click', () => {
+  const prev = history.pop();
+  openTask(prev, { push: true });
+});
+board.addEventListener('keydown', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTask(Number(card.dataset.i)); return; }
+  const cols = [...board.querySelectorAll('.cards')];
+  const col = card.parentElement;
+  const cards = [...col.querySelectorAll('.card')];
+  const i = cards.indexOf(card), c = cols.indexOf(col);
+  let next = null;
+  if (e.key === 'ArrowDown') next = cards[i + 1];
+  else if (e.key === 'ArrowUp') next = cards[i - 1];
+  else if (e.key === 'Home') next = cards[0];
+  else if (e.key === 'End') next = cards[cards.length - 1];
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    // Première colonne non vide dans la direction demandée.
+    const step = e.key === 'ArrowRight' ? 1 : -1;
+    for (let k = c + step; k >= 0 && k < cols.length && !next; k += step) {
+      const other = cols[k].querySelectorAll('.card');
+      next = other[Math.min(i, other.length - 1)];
+    }
+  } else return;
+  e.preventDefault();
+  if (next) next.focus();
+});
+
+document.getElementById('dlg-open').addEventListener('click', () => {
+  if (!currentPath) return;
+  api('/open', { path: currentPath })
+    .then(() => dialog.close())
+    .catch(e => { document.getElementById('dlg-error').textContent = e.message; });
+});
+
+// Capture : « + » dans une colonne ouvre un champ, Entrée crée le fichier avec le statut de la
+// colonne et l'ouvre dans l'éditeur, le reste s'écrit là-bas. Échap referme.
+board.addEventListener('click', e => {
+  const btn = e.target.closest('.col-add');
+  if (!btn) return;
+  const form = btn.closest('.column').querySelector('.col-new');
+  form.hidden = !form.hidden;
+  if (!form.hidden) form.querySelector('input').focus();
+});
+board.addEventListener('submit', e => {
+  const form = e.target.closest('.col-new');
+  if (!form) return;
+  e.preventDefault();
+  const err = form.querySelector('.error');
+  err.textContent = '';
+  api('/new', { title: form.querySelector('input').value, status: form.closest('.column').dataset.col })
+    .then(() => location.reload())
+    .catch(ex => { err.textContent = ex.message; });
+});
+board.addEventListener('keydown', e => {
+  const form = e.target.closest('.col-new');
+  if (form && e.key === 'Escape') { form.hidden = true; form.closest('.column').querySelector('.col-add').focus(); }
+});
+
+// Glisser une carte dans une colonne change son statut dans le fichier.
+board.addEventListener('dragstart', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  e.dataTransfer.setData('text/plain', card.dataset.i);
+  e.dataTransfer.effectAllowed = 'move';
+  card.classList.add('dragging');
+});
+board.addEventListener('dragover', e => {
+  const col = e.target.closest('.column');
+  if (!col) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  board.querySelectorAll('.column.drop').forEach(c => { if (c !== col) c.classList.remove('drop'); });
+  col.classList.add('drop');
+});
+board.addEventListener('dragend', () => {
+  board.querySelectorAll('.drop, .dragging').forEach(el => el.classList.remove('drop', 'dragging'));
+});
+board.addEventListener('drop', e => {
+  const col = e.target.closest('.column');
+  if (!col) return;
+  e.preventDefault();
+  setStatus(Number(e.dataTransfer.getData('text/plain')), col.dataset.col);
+});
+
+document.getElementById('dlg-close').addEventListener('click', () => dialog.close());
+
+// Clic sur le backdrop : la cible est le <dialog> lui-même, pas son contenu.
+dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
+
+// Graphe : layout force naïf, quelques centaines d'itérations puis SVG statique.
+// ponytail: O(n²) par itération, passer à d3-force si le board dépasse ~300 tâches.
+function renderGraph() {
+  const svg = document.getElementById('graph');
+  const W = svg.clientWidth, H = svg.clientHeight;
+  const LABEL = 200; // place réservée au texte à droite du nœud
+  const all = FILTERED.map(t => TASKS.indexOf(t));
+  const linked = new Set();
+  all.forEach(i => Object.values(TASKS[i].links).forEach(t => { if (all.includes(t)) { linked.add(i); linked.add(t); } }));
+  const ids = all.filter(i => linked.has(i));
+  const alone = all.length - ids.length;
+  const note = alone ? `<text class="empty" x="24" y="40">${alone} tâche${alone > 1 ? 's' : ''} sans lien [[...]], non affichée${alone > 1 ? 's' : ''}.</text>` : '';
+  if (!ids.length) { svg.innerHTML = note || `<text class="empty" x="24" y="40">Aucune tâche ne passe ces filtres.</text>`; return; }
+  const nodes = ids.map((i, k) => ({ i, x: W / 2 + Math.cos(k) * 100, y: H / 2 + Math.sin(k) * 100, vx: 0, vy: 0 }));
+  const pos = new Map(nodes.map((n, k) => [n.i, k]));
+  const edges = [];
+  nodes.forEach((n, a) => Object.values(TASKS[n.i].links).forEach(t => { if (pos.has(t)) edges.push([a, pos.get(t)]); }));
+  for (let it = 0; it < 300; it++) {
+    for (const a of nodes) for (const b of nodes) {
+      if (a === b) continue;
+      const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + 0.01, f = 30000 / d2;
+      a.vx += dx * f / Math.sqrt(d2); a.vy += dy * f / Math.sqrt(d2);
+    }
+    for (const [a, b] of edges) {
+      const dx = nodes[b].x - nodes[a].x, dy = nodes[b].y - nodes[a].y;
+      nodes[a].vx += dx * 0.02; nodes[a].vy += dy * 0.02; nodes[b].vx -= dx * 0.02; nodes[b].vy -= dy * 0.02;
+    }
+    for (const n of nodes) {
+      n.vx += (W / 2 - n.x) * 0.002; n.vy += (H / 2 - n.y) * 0.002;
+      n.x = Math.min(W - LABEL, Math.max(40, n.x + (n.vx *= 0.6))); n.y = Math.min(H - 20, Math.max(20, n.y + (n.vy *= 0.6)));
+    }
+  }
+  svg.innerHTML = note + edges.map(([a, b]) =>
+    `<line x1="${nodes[a].x}" y1="${nodes[a].y}" x2="${nodes[b].x}" y2="${nodes[b].y}"/>`).join('')
+  + nodes.map(n => `<g data-i="${n.i}" tabindex="0" role="button" aria-label="${esc(TASKS[n.i].title || TASKS[n.i].filename)}"><circle cx="${n.x}" cy="${n.y}" r="${5 + Object.keys(TASKS[n.i].links).length * 2}" fill="var(--status-${TASKS[n.i].status})"><title>${esc(TASKS[n.i].title || TASKS[n.i].filename)}</title></circle>
+      <text x="${n.x + 9}" y="${n.y + 4}">${esc(String(TASKS[n.i].title || TASKS[n.i].filename).slice(0, 28))}</text></g>`).join('');
+}
+document.getElementById('graph').addEventListener('click', e => {
+  const g = e.target.closest('g[data-i]');
+  if (g) openTask(Number(g.dataset.i));
+});
+document.getElementById('graph').addEventListener('keydown', e => {
+  const g = e.target.closest('g[data-i]');
+  if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openTask(Number(g.dataset.i)); }
+});
+document.getElementById('f-view').addEventListener('click', e => {
+  const on = e.target.getAttribute('aria-pressed') !== 'true';
+  e.target.setAttribute('aria-pressed', on);
+  document.getElementById('board').classList.toggle('hidden', on);
+  document.getElementById('graph').classList.toggle('hidden', !on);
+  if (on) renderGraph();
+});
+
+[...FILTER_IDS, 'f-sort'].forEach(id => document.getElementById(id).addEventListener('change', render));
+['f-reset', 'empty-reset'].forEach(id => document.getElementById(id).addEventListener('click', resetFilters));
+
+disableEmptyFilters();
+loadState();
+loadUrl();
+render();
+</script>
+</body>
+</html>

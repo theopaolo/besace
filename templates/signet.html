@@ -18,8 +18,18 @@
 {% set titre = page.title %}
 {% if titre | length > 3 and titre == titre | upper %}{% set titre = titre | capitalize %}{% endif %}
 {% set premier = paras | first | striptags | trim %}
+{# Grands dossiers (config.extra.dossiers) : tous ceux dont le signet porte une étiquette ou une catégorie, sinon « vrac ». #}
+{% set_global dossiers = [] %}
+{% for d in config.extra.dossiers | default(value=[]) %}
+  {% set_global dedans = false %}
+  {% for t in tag_list %}{% if t in d.tags %}{% set_global dedans = true %}{% endif %}{% endfor %}
+  {% for c in cats %}{% if c in d.categories | default(value=[]) %}{% set_global dedans = true %}{% endif %}{% endfor %}
+  {% if dedans %}{% set_global dossiers = [...dossiers, d.slug] %}{% endif %}
+{% endfor %}
+{% if not dossiers %}{% set dossiers = ["vrac"] %}{% endif %}
 <li class="fiche"{% if titre | length > 60 %} data-long{% endif %}
   data-categorie="{{ cats | join(sep=" ") }}"
+  data-dossier="{{ dossiers | join(sep=" ") }}"
   data-tags="{{ tags_bruts }}"
   data-annee="{{ page.year | default(value="") }}"
   data-recherche="{{ recherche | lower | escape }}">

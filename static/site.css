@@ -472,6 +472,9 @@
     display: none;
   }
   :root[data-nb] .fiche::after,
+  :root[data-nb] .chemise button::after,
+  :root[data-nb] .chemise-onglet,
+  :root[data-nb] .languette,
   :root[data-nb] .dossier,
   :root[data-nb] .postit,
   :root[data-nb] .fiche-onglet,
@@ -622,15 +625,18 @@
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   }
   .fiche[data-categorie~="design"],
-  .dossier[data-categorie~="design"] {
+  .dossier[data-categorie~="design"],
+  .languette[data-categorie~="design"] {
     --papier: var(--paper-design);
   }
   .fiche[data-categorie~="developpement"],
-  .dossier[data-categorie~="developpement"] {
+  .dossier[data-categorie~="developpement"],
+  .languette[data-categorie~="developpement"] {
     --papier: var(--paper-dev);
   }
   .fiche[data-categorie~="ressources"],
-  .dossier[data-categorie~="ressources"] {
+  .dossier[data-categorie~="ressources"],
+  .languette[data-categorie~="ressources"] {
     --papier: var(--paper-ressources);
   }
   .fiche > * + * {
@@ -799,9 +805,9 @@
   }
   .fiche .tag:hover { color: var(--accent); background: transparent; }
   /* Chaque dossier a son petit angle de travers, distribué par position, pour le survol et l'ouverture. */
-  .grille > .fiche:nth-child(3n) { --tour: 0.45deg; }
-  .grille > .fiche:nth-child(3n + 1) { --tour: -0.35deg; }
-  .grille > .fiche:nth-child(3n + 2) { --tour: 0.25deg; }
+  .grille > .fiche:nth-child(3n), .chemises > .chemise:nth-child(3n) { --tour: 0.45deg; }
+  .grille > .fiche:nth-child(3n + 1), .chemises > .chemise:nth-child(3n + 1) { --tour: -0.35deg; }
+  .grille > .fiche:nth-child(3n + 2), .chemises > .chemise:nth-child(3n + 2) { --tour: 0.25deg; }
   /* Le dossier ouvert reste sorti de la pile tant que la feuille est là : onglet en encre, de travers, ombre plus longue. */
   .grille:not([data-vue="liste"]) > .fiche[data-ouvert] { rotate: var(--tour); }
   .fiche[data-ouvert] .fiche-onglet { background-color: var(--fg); color: var(--bg); }
@@ -813,6 +819,131 @@
     .fiche-image { transition: transform 120ms cubic-bezier(0.2, 0, 0, 1); }
     .fiche:hover .fiche-image, .fiche:focus-within .fiche-image { transform: rotate(0); }
   }
+  /* Le bureau : un grand dossier (chemise) par entrée de config.extra.dossiers, pleine largeur comme la grille.
+     Vue Dossiers : les chemises tant qu'aucun dossier n'est ouvert et que la recherche est vide, la grille sinon.
+     L'en-tête du dossier ouvert reste dans les vues Fiches et Liste : le dossier est un filtre comme les autres. */
+  .chemises {
+    list-style: none;
+    padding: 0;
+    margin-block: 0;
+    margin-inline: calc(50% - 50vw + var(--gutter));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-l) var(--space-m);
+    view-transition-name: bureau;
+  }
+  .grille[data-vue="dossiers"]:not([data-dossier]):not([data-recherche]),
+  body:not(:has(.grille[data-vue="dossiers"]:not([data-dossier]):not([data-recherche]))) .chemises,
+  body:not(:has(.grille[data-dossier])) .dossier-ouvert {
+    display: none;
+  }
+  .dossier-ouvert {
+    margin-block: var(--space-s) var(--space-l);
+    margin-inline: calc(50% - 50vw + var(--gutter));
+  }
+  .dossier-ouvert .entete-titre {
+    margin-block-start: var(--space-2xs);
+    view-transition-name: dossier-nom;
+  }
+  .dossier-ouvert .entete-titre:focus { outline: none; }
+  /* La chemise : même dossier que les fiches, en plus grand, onglet chiffré, nom en titre, pile de languettes en bas. */
+  .chemise {
+    --papier: var(--paper);
+    --tab: 2rem;
+  }
+  .chemise button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    min-block-size: 15rem;
+    padding: calc(var(--tab) + var(--space-m)) var(--space-m) var(--space-m);
+    border: 0;
+    background: linear-gradient(transparent var(--tab), var(--papier) var(--tab));
+    color: var(--fg);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    isolation: isolate;
+  }
+  .chemise button::after {
+    content: "";
+    position: absolute;
+    inset: var(--tab) 0 0 0;
+    z-index: -1;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 9px rgb(0 0 0 / 0.07);
+  }
+  .chemise-onglet {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    block-size: var(--tab);
+    display: flex;
+    align-items: center;
+    padding-inline: var(--space-s) calc(var(--space-s) + 0.9rem);
+    background: color-mix(in oklab, var(--papier) 95%, var(--fg));
+    clip-path: polygon(0 0, calc(100% - 0.9rem) 0, 100% 100%, 0 100%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    font-size: var(--step-0);
+    color: var(--muted);
+  }
+  .chemise-nom {
+    font-size: var(--step-2);
+    font-weight: 550;
+    line-height: 1.18;
+    text-wrap: balance;
+    transition: color 0.15s;
+  }
+  .chemise:hover .chemise-nom { color: var(--accent); }
+  .chemise-pile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    inline-size: 100%;
+    margin-block-start: auto;
+    padding-block-start: var(--space-m);
+  }
+  .languette {
+    --papier: var(--paper);
+    --i: 0;
+    display: block;
+    max-inline-size: calc(100% - 3rem);
+    margin-inline-start: calc(var(--i) * 0.75rem);
+    padding: 0.2rem var(--space-s) 0.2rem var(--space-xs);
+    background: color-mix(in oklab, var(--papier) 92%, var(--fg));
+    clip-path: polygon(0 0, calc(100% - 0.6rem) 0, 100% 100%, 0 100%);
+    font-size: var(--step--1);
+    line-height: 1.3;
+    color: color-mix(in oklab, var(--fg) 82%, var(--papier));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .languette:nth-child(2) { --i: 1; }
+  .languette:nth-child(3) { --i: 2; }
+  .languette:nth-child(4) { --i: 3; }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .chemise button { transition: rotate 120ms cubic-bezier(0.2, 0, 0, 1); }
+    .chemise:hover button { rotate: var(--tour); }
+    .languette { transition: translate 160ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--i) * 30ms); }
+    .chemise:hover .languette { translate: 0 -3px; }
+  }
+  /* Ouverture : les autres chemises se rangent, le nom file vers l'en-tête, les fiches sortent du dossier vers le haut.
+     Fermeture : l'inverse. Le script n'appelle startViewTransition qu'en mouvement non réduit. */
+  .grille { view-transition-name: grille; }
+  ::view-transition-group(*) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  ::view-transition-old(bureau),
+  ::view-transition-old(grille) { animation: 160ms ease-in both ranger; }
+  ::view-transition-new(bureau),
+  ::view-transition-new(grille) { animation: 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both sortir; }
+  /* Le nom garde sa taille de chaque côté (pas d'étirement), seule la boîte voyage. */
+  ::view-transition-old(dossier-nom),
+  ::view-transition-new(dossier-nom) { inline-size: 100%; block-size: 100%; object-fit: none; object-position: left top; }
+  @keyframes sortir { from { opacity: 0; translate: 0 1.5rem; } }
+  @keyframes ranger { to { opacity: 0; translate: 0 1rem; } }
   .vide {
     max-inline-size: 24rem;
     margin: var(--space-xl) auto;
@@ -883,11 +1014,21 @@
     margin: var(--space-xs) 0 0;
     font-size: var(--step-0);
   }
-  .retour-lien a {
+  .retour-lien a,
+  .retour-lien button {
     color: var(--muted);
     text-decoration: none;
   }
-  .retour-lien a:hover {
+  .retour-lien button {
+    border: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .retour-lien a:hover,
+  .retour-lien button:hover {
     color: var(--accent);
     text-decoration: underline;
   }
@@ -1098,7 +1239,7 @@
     color: var(--accent-ink);
   }
   @media (prefers-reduced-motion: reduce) {
-    .volet, .volet::backdrop, .fiche-image, .mini, .fiche, .fiche::after, .etiquettes-toggle::before { transition: none; }
+    .volet, .volet::backdrop, .fiche-image, .mini, .fiche, .fiche::after, .etiquettes-toggle::before, .chemise button, .languette { transition: none; }
     .fiche[data-tire] .fiche-onglet { animation: none; }
     .fiche[data-ouvert] { rotate: none; }
 
@@ -1145,6 +1286,9 @@
   }
   @media (width < 45rem) {
     .grille { columns: 1; }
+    .chemises { gap: var(--space-m); }
+    .chemise button { min-block-size: 0; }
+    .chemise-pile { padding-block-start: var(--space-s); }
     .barre-rangee { gap: 0 var(--space-s); padding-block: var(--space-2xs); }
     .barre .recherche-champ { flex: 1 1 100%; margin-block-end: var(--space-3xs); }
     .recherche-champ kbd { display: none; }

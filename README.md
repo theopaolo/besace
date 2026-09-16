@@ -19,7 +19,7 @@ Le formulaire indique les champs obligatoires. Vos modifications sont sauvegard�
 3. Remplissez les métadonnées et ajoutez une ou deux phrases pour décrire l’utilité du lien. Ne répétez pas le titre ou l’URL, car le site les affiche déjà.
 4. Envoyez vos modifications sur la branche `main`.
 
-Les catégories et les pages de tags sont créées automatiquement à partir des métadonnées.
+Les catégories et les pages de tags sont créées automatiquement à partir des métadonnées. Les grands dossiers de la vue d’accueil sont définis dans `config.toml` (`[[extra.dossiers]]`) par listes d’étiquettes et de catégories ; un signet sans correspondance va « En vrac ».
 
 ### Conventions
 
@@ -41,11 +41,9 @@ Les catégories et les pages de tags sont créées automatiquement à partir des
 - Tags courts, en minuscules, sans accents.
 - Lien vers une autre fiche : `[Pagefind](@/signets/pagefind.md)`, avec le nom lisible comme texte du lien. Zola vérifie que la cible existe.
 
-### Reprendre le design de Glane
+### Porter le design vers Glane
 
-```sh
-git fetch upstream && git checkout upstream/main -- templates static/site.css static/piloti
-```
+Le design se fait ici d'abord. Glane le reprend avec la commande décrite dans son README (`git archive` depuis ce dépôt, sans les signets).
 
 ### Site
 

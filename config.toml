@@ -37,5 +37,42 @@ tags = ["logiciel-convivial", "convivialite", "illich", "cooperer", "ecologie", 
 nom = "Son et jeu"
 tags = ["soundui", "audio", "music", "webradio", "podcast", "instrument", "game-related", "game-theory", "playdate"]
 
+# Grands dossiers du bureau (vue par défaut). Un signet entre dans chaque dossier dont il porte
+# une étiquette ou une catégorie listée ; sans correspondance, il va « En vrac ».
+[[extra.dossiers]]
+slug = "sobriete"
+nom = "Sobriété numérique et informatique conviviale"
+tags = ["logiciel-convivial", "convivialite", "illich", "ecologie", "energie", "low-tech", "limites", "couts", "numerique-de-controle", "survival", "smallweb", "small-tech", "digitalgarden", "malleable", "situated-software", "home-cooked", "software", "selfhosted", "mastodon", "quality", "computing"]
+categories = ["societe"]
+[[extra.dossiers]]
+slug = "cooperation"
+nom = "Coopération et outils de facilitation"
+tags = ["cooperer", "mediation", "education", "coloque", "concept", "time-management", "note-app", "appressource", "ressourcefreelance", "research", "science", "francais"]
+[[extra.dossiers]]
+slug = "studios"
+nom = "Studios et références"
+tags = ["studio", "portfolio", "collectif", "artist", "art", "photography", "contemporary", "illustrator", "dessin", "logo", "graphisme", "expo", "magazine", "edition", "web-publication", "book", "journal", "articles", "writing", "narration", "30s", "model-pour-lab"]
+[[extra.dossiers]]
+slug = "web-design"
+nom = "Web design et inspiration de sites"
+tags = ["aspireinspire", "site-inspiration", "inspiration", "index", "directory", "unusual-ui", "crazy-cool", "colorful", "design", "web"]
+[[extra.dossiers]]
+slug = "fondamentaux"
+nom = "Fondamentaux du métier"
+tags = ["typographie", "a11y", "tutorial", "cours", "coding", "tech", "blog"]
+[[extra.dossiers]]
+slug = "ludique"
+nom = "Web ludique et génératif"
+tags = ["genart", "creative-coding", "net-art", "web-toys", "game-related", "game-theory", "playdate", "avadonware", "soundui", "audio", "music", "webradio", "podcast", "instrument"]
+categories = ["jeu", "son"]
+[[extra.dossiers]]
+slug = "ia"
+nom = "IA et outils RAG"
+tags = ["ai", "agents", "mcp", "neural-net"]
+[[extra.dossiers]]
+slug = "outils"
+nom = "Outils de dev et utilitaires"
+tags = ["webtool", "micro-tool", "micro-saas", "app", "service", "platform", "library", "framework", "api", "cms", "kirby", "leaflet", "webgl", "javascript", "json", "json-editor", "hosting", "startup"]
+
 [markdown]
 external_links_target_blank = true

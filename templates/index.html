@@ -68,6 +68,7 @@
       <div class="reglages-contenu">
         <div class="reglage"><span>Affichage</span><div class="vues" role="group" aria-label="Affichage">
           <button type="button" data-vue="dossiers" aria-pressed="true">Dossiers</button>
+          <button type="button" data-vue="fiches" aria-pressed="false">Fiches</button>
           <button type="button" data-vue="liste" aria-pressed="false">Liste</button>
         </div></div>
         <div class="reglage"><span>Taille des fiches</span><div class="outils" role="group" aria-label="Taille des fiches">
@@ -94,7 +95,26 @@
   <div class="volet-contenu" id="volet-contenu"></div>
 </dialog>
 
-<ul class="grille" id="grille" role="list">
+{# Le bureau : un grand dossier par entrée de config.extra.dossiers, plus « En vrac ». Compteurs et pile remplis par le script. #}
+<ul class="chemises" id="chemises" role="list">
+  {% for d in config.extra.dossiers | default(value=[]) %}
+  <li class="chemise" data-dossier="{{ d.slug }}"><button type="button" data-ouvrir="{{ d.slug }}">
+    <span class="chemise-onglet"><span class="n"></span></span>
+    <span class="chemise-nom">{{ d.nom }}</span>
+    <span class="chemise-pile" aria-hidden="true"></span>
+  </button></li>
+  {% endfor %}
+  <li class="chemise" data-dossier="vrac"><button type="button" data-ouvrir="vrac">
+    <span class="chemise-onglet"><span class="n"></span></span>
+    <span class="chemise-nom">En vrac</span>
+    <span class="chemise-pile" aria-hidden="true"></span>
+  </button></li>
+</ul>
+<div class="entete dossier-ouvert" id="dossier-ouvert">
+  <p class="retour-lien"><button type="button" id="retour-dossiers">← Tous les dossiers</button></p>
+  <h2 class="entete-titre" id="dossier-ouvert-nom" tabindex="-1"></h2>
+</div>
+<ul class="grille" id="grille" role="list" data-vue="dossiers">
   {% for page in section.pages %}{% include "signet.html" %}{% endfor %}
 </ul>
 <p class="vide" id="vide" hidden>
@@ -102,6 +122,7 @@
   <button type="button" id="reinitialiser">Tout réafficher</button>
 </p>
 
+<noscript><style>.chemises, .dossier-ouvert { display: none !important; } .grille { display: block !important; }</style></noscript>
 <script type="module">
   const champ = document.getElementById("recherche");
   const statut = document.getElementById("statut");
@@ -327,6 +348,7 @@
     const v = [...fiches].filter((f) => !f.hidden);
     const f = v[Math.floor(Math.random() * v.length)];
     if (!f) return;
+    if (!dossierActif && grille.dataset.vue === "dossiers") ouvrirDossier(mots(f.dataset.dossier)[0], false);
     if (!large.matches) explorer.open = false;
     reglages.open = false;
     f.scrollIntoView({ block: "center", behavior: mouvementReduit.matches ? "instant" : "smooth" });
@@ -348,7 +370,60 @@
     try { localStorage.setItem("vue", vue); } catch {}
   }
   for (const b of boutonsVue) b.addEventListener("click", () => majVue(b.dataset.vue));
-  try { if (localStorage.getItem("vue") === "liste") majVue("liste"); } catch {}
+  try { const v = localStorage.getItem("vue"); if (v === "fiches" || v === "liste") majVue(v); } catch {}
+
+  // Grands dossiers : un filtre de plus, ouvert depuis le bureau (vue Dossiers). Le nom du dossier
+  // cliqué file vers l'en-tête et les fiches sortent du dossier (View Transitions, sinon changement sec).
+  const chemises = document.getElementById("chemises");
+  const nomOuvert = document.getElementById("dossier-ouvert-nom");
+  const noms = new Map([...chemises.querySelectorAll(".chemise")].map((c) => [c.dataset.dossier, c.querySelector(".chemise-nom").textContent]));
+  let dossierActif = "";
+  function transition(maj, nom) {
+    const bouton = chemises.querySelector(`[data-ouvrir="${dossierActif || nom}"] .chemise-nom`);
+    if (!document.startViewTransition || mouvementReduit.matches) return maj();
+    bouton.style.viewTransitionName = "dossier-nom";
+    document.startViewTransition(maj).finished.finally(() => (bouton.style.viewTransitionName = ""));
+  }
+  function ouvrirDossier(slug, anim = true) {
+    const maj = () => {
+      dossierActif = slug;
+      grille.dataset.dossier = slug;
+      nomOuvert.textContent = noms.get(slug);
+      appliquer();
+      window.scrollTo(0, 0);
+      nomOuvert.focus({ preventScroll: true });
+    };
+    anim ? transition(maj, slug) : maj();
+  }
+  function fermerDossier(anim = true) {
+    if (!dossierActif) return;
+    const bouton = chemises.querySelector(`[data-ouvrir="${dossierActif}"]`);
+    const maj = () => {
+      dossierActif = "";
+      delete grille.dataset.dossier;
+      appliquer();
+      window.scrollTo(0, 0);
+      bouton.focus({ preventScroll: true });
+    };
+    anim ? transition(maj) : maj();
+  }
+  chemises.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-ouvrir]");
+    if (b) ouvrirDossier(b.dataset.ouvrir);
+  });
+  document.getElementById("retour-dossiers").addEventListener("click", () => fermerDossier());
+  // La pile de chaque chemise : les languettes des quatre signets les plus récents du dossier.
+  for (const c of chemises.querySelectorAll(".chemise")) {
+    const pile = c.querySelector(".chemise-pile");
+    const dedans = [...fiches].filter((f) => f.dataset.dossier.split(" ").includes(c.dataset.dossier)).slice(0, 4);
+    for (const f of dedans) {
+      const l = document.createElement("span");
+      l.className = "languette";
+      l.dataset.categorie = f.dataset.categorie;
+      l.textContent = f.querySelector(".fiche-titre").textContent.trim();
+      pile.append(l);
+    }
+  }
 
   const nbTags = etiqCount?.textContent ?? "";
   let catActif = "";
@@ -364,8 +439,11 @@
 
   function appliquer() {
     const q = mots(normaliser(champ.value));
+    // Une recherche depuis le bureau cherche partout : la grille remplace les chemises.
+    grille.toggleAttribute("data-recherche", q.length > 0);
     let visibles = 0;
     const restants = new Map();
+    const parDossier = new Map();
     for (const f of fiches) {
       const cats = mots(f.dataset.categorie);
       const tags = mots(f.dataset.tags);
@@ -376,11 +454,19 @@
       const okTags = [...tagsActifs].every((t) => tags.includes(t));
       const okAnnee = !anneeActive || f.dataset.annee === anneeActive;
       const okQ = q.every((mot) => texte.includes(mot));
-      f.hidden = !(okCat && okTags && okQ && okAnnee);
+      const okHorsDossier = okCat && okTags && okQ && okAnnee;
+      const dossiers = mots(f.dataset.dossier);
+      f.hidden = !(okHorsDossier && (!dossierActif || dossiers.includes(dossierActif)));
+      if (okHorsDossier) for (const d of dossiers) parDossier.set(d, (parDossier.get(d) ?? 0) + 1);
       if (!f.hidden) {
         visibles++;
         for (const t of tags) restants.set(t, (restants.get(t) ?? 0) + 1);
       }
+    }
+    for (const c of chemises.querySelectorAll(".chemise")) {
+      const n = parDossier.get(c.dataset.dossier) ?? 0;
+      c.hidden = n === 0;
+      c.querySelector(".n").textContent = n === 1 ? "1 signet" : `${n} signets`;
     }
     // Rétrécit le panneau : une étiquette sans résultat combiné est désactivée (et masquée en CSS).
     for (const b of boutonsTag) {
@@ -402,6 +488,7 @@
     vide.hidden = visibles !== 0;
     document.getElementById("hasard").disabled = visibles === 0;
     const actifs = [
+      dossierActif && noms.get(dossierActif),
       catActif && [...boutonsCat].find((b) => b.dataset.cat === catActif)?.textContent,
       anneeActive,
       ...tagsActifs,
@@ -451,6 +538,8 @@
 
   function reinitialiser() {
     champ.value = "";
+    dossierActif = "";
+    delete grille.dataset.dossier;
     catActif = "";
     anneeActive = "";
     tagsActifs.clear();
@@ -463,6 +552,7 @@
   }
   reset.addEventListener("click", reinitialiser);
   document.getElementById("effacer").addEventListener("click", reinitialiser);
+  appliquer();
 </script>
 {% else %}
 <p>
