@@ -10,6 +10,12 @@ content:
     exclude: [_index.md]
     view:
       fields: [title, taxonomies.category, taxonomies.tags]
+    actions:
+      - name: vignette
+        label: Récupérer la vignette
+        scope: entry
+        workflow: vignette.yml
+        ref: current
     fields:
       - name: title
         label: Titre
@@ -17,7 +23,7 @@ content:
         required: true
       - name: extra
         type: object
-        label: Lien
+        label: Lien et dossiers
         fields:
           - name: url
             label: URL
@@ -27,6 +33,21 @@ content:
           - name: image
             label: Image (vignette)
             type: image
+          - name: dossiers
+            label: Grands dossiers
+            description: "En plus de ceux déduits des étiquettes (config.toml)."
+            type: select
+            options:
+              multiple: true
+              values:
+                - { name: sobriete, label: Sobriété numérique et informatique conviviale }
+                - { name: cooperation, label: Coopération et outils de facilitation }
+                - { name: studios, label: Studios et références }
+                - { name: web-design, label: Web design et inspiration de sites }
+                - { name: fondamentaux, label: Fondamentaux du métier }
+                - { name: ludique, label: Web ludique et génératif }
+                - { name: ia, label: IA et outils RAG }
+                - { name: outils, label: Outils de dev et utilitaires }
       - name: taxonomies
         type: object
         label: Classement
@@ -34,12 +55,24 @@ content:
           - name: category
             label: Catégorie
             type: select
-            list: true
-            options: [design, developpement, son, jeu, societe, ressources]
+            options:
+              multiple: true
+              max: 1
+              values:
+                - { name: design, label: Design }
+                - { name: developpement, label: Développement }
+                - { name: son, label: Son }
+                - { name: jeu, label: Jeu }
+                - { name: societe, label: Société }
+                - { name: ressources, label: Ressources }
           - name: tags
-            label: Tags
-            type: string
-            list: true
+            label: Étiquettes
+            type: select
+            description: "Courtes, en minuscules, sans accents. Une nouvelle étiquette s’ajoute à cette liste avec scripts/pages_tags.py."
+            options:
+              multiple: true
+              # étiquettes : scripts/pages_tags.py
+              values: [30s, a11y, agents, ai, api, app, appressource, art, articles, artist, aspireinspire, audio, avadonware, blog, book, cms, coding, collectif, coloque, colorful, computing, concept, contemporary, convivialite, cooperer, cours, couts, crazy-cool, creative-coding, design, dessin, digital, digitalgarden, directory, ecologie, edition, education, energie, expo, framework, francais, game-related, game-theory, genart, graphisme, home-cooked, hosting, illich, illustrator, index, inspiration, instrument, javascript, journal, json, json-editor, kirby, leaflet, library, limites, logiciel-convivial, logo, low-tech, magazine, malleable, mastodon, mcp, mediation, micro-saas, micro-tool, model-pour-lab, music, narration, net-art, neural-net, note-app, numerique-de-controle, photography, platform, playdate, podcast, portfolio, quality, research, ressourcefreelance, ressources, science, selfhosted, service, site-inspiration, situated-software, small-tech, smallweb, software, soundui, startup, studio, survival, tech, time-management, tutorial, typographie, unusual-ui, web, web-publication, web-toys, webgl, webradio, webtool, writing]
       - name: body
         label: Pourquoi conserver ce lien
         type: rich-text

@@ -38,7 +38,8 @@ Les catégories et les pages de tags sont créées automatiquement à partir des
 
 - Nom de fichier en minuscules, sans accents, avec des tirets.
 - Catégorie : `developpement`, `design` ou `ressources`, en premier. Ajoutez `francophone` en second si la ressource est en français : `category: [ressources, francophone]`. Pour créer une catégorie, ajoutez-la dans `config.toml` (`[extra.categories]`) et dans `.pages.yml`.
-- Tags courts, en minuscules, sans accents.
+- Tags courts, en minuscules, sans accents. Pages CMS ne propose que les étiquettes listées dans `.pages.yml` : après en avoir créé une dans un éditeur, lancez `python3 scripts/pages_tags.py` pour mettre la liste à jour.
+- `extra.dossiers: [slug]` place un signet dans un grand dossier en plus de ceux déduits de ses étiquettes (slugs dans `config.toml`).
 - Lien vers une autre fiche : `[Pagefind](@/signets/pagefind.md)`, avec le nom lisible comme texte du lien. Zola vérifie que la cible existe.
 
 ### Porter le design vers Glane

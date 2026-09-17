@@ -1,0 +1,32 @@
+# Bouton « Récupérer la vignette » de Pages CMS : va chercher l'image OpenGraph
+# du signet, la commit, puis relance la publication du site.
+name: vignette
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: write
+jobs:
+  vignette:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ fromJSON(inputs.payload).repository.ref }}
+      - run: python3 scripts/fetch_images.py "$FICHE"
+        env:
+          FICHE: ${{ fromJSON(inputs.payload).context.path }}
+      - run: |
+          git add -A
+          git diff --cached --quiet && { echo "Aucune image récupérée (voir l'étape précédente)."; exit 1; }
+          git -c user.name=pages-cms -c user.email=pages-cms@users.noreply.github.com commit -m "vignette: $(basename "$FICHE" .md)"
+          git push
+          gh workflow run pages.yml --ref "$(git branch --show-current)"
+        env:
+          FICHE: ${{ fromJSON(inputs.payload).context.path }}
+          GH_TOKEN: ${{ github.token }}

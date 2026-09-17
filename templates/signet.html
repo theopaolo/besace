@@ -26,6 +26,7 @@
   {% for c in cats %}{% if c in d.categories | default(value=[]) %}{% set_global dedans = true %}{% endif %}{% endfor %}
   {% if dedans %}{% set_global dossiers = [...dossiers, d.slug] %}{% endif %}
 {% endfor %}
+{% for d in page.extra.dossiers | default(value=[]) %}{% if d not in dossiers %}{% set_global dossiers = [...dossiers, d] %}{% endif %}{% endfor %}
 {% if not dossiers %}{% set dossiers = ["vrac"] %}{% endif %}
 <li class="fiche"{% if titre | length > 60 %} data-long{% endif %}
   data-categorie="{{ cats | join(sep=" ") }}"
