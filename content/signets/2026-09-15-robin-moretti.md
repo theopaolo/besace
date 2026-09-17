@@ -3,8 +3,6 @@ title: Robin Moretti
 extra:
   url: https://robinmoretti.eu/
   image: /images/2026-09-15-robin-moretti.jpg
-  dossiers:
-    - studios
 taxonomies:
   category:
     - design
