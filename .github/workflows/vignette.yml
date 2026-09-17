@@ -1,6 +1,9 @@
-# Bouton « Récupérer la vignette » de Pages CMS : va chercher l'image OpenGraph
-# du signet, la commit, puis relance la publication du site.
+# Bouton « Récupérer la vignette » de Pages CMS :
+# récupère l'image OpenGraph du signet, la commit,
+# puis relance la publication du site.
+
 name: vignette
+
 on:
   workflow_dispatch:
     inputs:
@@ -8,25 +11,52 @@ on:
         description: Pages CMS payload as JSON
         required: true
         type: string
+
 permissions:
   contents: write
   actions: write
+
 jobs:
   vignette:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+
+    env:
+      FICHE: ${{ fromJSON(inputs.payload).context.path }}
+      REF: ${{ fromJSON(inputs.payload).repository.ref }}
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ fromJSON(inputs.payload).repository.ref }}
-      - run: python3 scripts/fetch_images.py "$FICHE"
+          ref: ${{ env.REF }}
+
+      - name: Récupérer la vignette
+        run: python3 scripts/fetch_images.py "$FICHE"
+
+      - name: Commit et republier
         env:
-          FICHE: ${{ fromJSON(inputs.payload).context.path }}
-      - run: |
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
           git add -A
-          git diff --cached --quiet && { echo "Aucune image récupérée (voir l'étape précédente)."; exit 1; }
-          git -c user.name=pages-cms -c user.email=pages-cms@users.noreply.github.com commit -m "vignette: $(basename "$FICHE" .md)"
+
+          if git diff --cached --quiet; then
+            echo "Aucune image récupérée."
+            exit 1
+          fi
+
+          git \
+            -c user.name=pages-cms \
+            -c user.email=pages-cms@users.noreply.github.com \
+            commit -m "vignette: $(basename "$FICHE" .md)"
+
           git push
-          gh workflow run pages.yml --ref "$(git branch --show-current)"
-        env:
-          FICHE: ${{ fromJSON(inputs.payload).context.path }}
-          GH_TOKEN: ${{ github.token }}
+
+          BRANCH="$(git branch --show-current)"
+
+          curl --fail-with-body -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/pages.yml/dispatches" \
+            -d "$(jq -nc --arg ref "$BRANCH" '{ref: $ref}')"

@@ -1,29 +1,46 @@
 name: pages
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
-concurrency: pages
+  actions: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: curl -sL https://github.com/getzola/zola/releases/download/v0.23.5/zola-v0.23.5-x86_64-unknown-linux-gnu.tar.gz | tar xz
-      - run: ./zola build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: public
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - id: deployment
+      - uses: actions/checkout@v7
+
+      - name: Install Zola
+        run: |
+          curl -sL \
+            https://github.com/getzola/zola/releases/download/v0.23.5/zola-v0.23.5-x86_64-unknown-linux-gnu.tar.gz \
+            | tar xz
+
+      - name: Build
+        run: ./zola build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+      - name: Deploy
+        id: deployment
         uses: actions/deploy-pages@v4
